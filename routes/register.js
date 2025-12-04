@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
     });
 
     console.log('User registered:', newUser);
-    res.redirect('/'); // back to login
+    res.redirect('/'); 
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');

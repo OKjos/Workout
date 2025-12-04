@@ -10,10 +10,8 @@ const User = require('./models/User');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Connect to MongoDB
 connectDB.then(() => console.log('✅ DB connected'));
 
-// Middleware
 // Enable user sessions
 app.use(session({
   secret: process.env.SESSION_SECRET || 'secret',
@@ -26,11 +24,8 @@ app.use(session({
 
 
 
-// Parse form data
 app.use(express.urlencoded({ extended: true }));
-// Parse JSON data  
 app.use(express.json());
-// Serve static files (CSS, JS, images)
 app.use(express.static(path.join(__dirname, 'public')));
 
 
@@ -73,7 +68,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// Add this route to server.js (before app.listen)
 app.get('/api/current-user', (req, res) => {
   if (req.session.userId) {
     res.json({
@@ -115,7 +109,6 @@ app.get("/api/food", async (req, res) => {
     }
 });
 
-// Start server
 app.listen(port, () => {
   console.log(`✅ Listening at http://localhost:${port}`);
 });

@@ -1,7 +1,3 @@
-//  - Attach DOM event listeners (search button, routine form, tabs)
-//  - Initialize page elements on load
-//  - Import functions from other modules
-
 import { exerciseSearch, handleFoodSearch } from "./search.js";
 import { loadWorkouts } from "./workouts.js";
 import { macroPiChart } from "./foodDis.js";

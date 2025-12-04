@@ -1,5 +1,5 @@
-// Functions to make API calls
-// Handles GET and POST requests for your app
+
+// Handles GET and POST requests 
 
 
 export async function apiGet(url, options = {}) {

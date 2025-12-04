@@ -1,5 +1,3 @@
-// Functions to create and manage routines
-
 import { apiPost } from './api.js';
 import { getUserId, capitalize } from './helper.js';
 

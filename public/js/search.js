@@ -1,5 +1,3 @@
-// Handles search functionality for exercises
-
 import { apiGet, apiPost } from './api.js';
 import { capitalize, getUserId } from './helper.js';
 import { addExerciseToWorkout } from './workouts.js';
@@ -12,7 +10,6 @@ export async function exerciseSearch() {
     let url = "";
     let options = {};
 
-    // Build API URL based on type
     if (type === "bodypart") {
         url = `https://www.exercisedb.dev/api/v1/bodyparts/${input}/exercises?offset=0&limit=10`;
     } else if (type === "musclename") {

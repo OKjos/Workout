@@ -38,10 +38,8 @@ router.get('/', isLoggedIn, (req, res) => {
 router.post('/', async (req, res) => {
  try {
 
-  //Gets the data from req body
   const { workoutName, userId } = req.body;
   
-  //Validates the required fields
   if (!workoutName || !userId) {
     return res.status(400).json({
       success: false,
@@ -100,7 +98,6 @@ router.get('/users/:userId/workouts', async (req, res) => {
   try {
     const { userId } = req.params;
 
-    //Finds the workouts by user ID then sorts by creation date (new to oldest)
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({
@@ -173,10 +170,8 @@ router.get('/users/:userId/workouts/:workoutId', async (req, res) => {
 router.post("/users/:userId/workouts/:workoutId/add-exercise", async (req, res) => {
   try {
 
-    //Gets the workout ID from the URL params
     const { workoutId, userId } = req.params;
 
-    //Gets the exercise data from req body
     const { exerciseId, bodyParts, gifUrl, targetMuscles, secondaryMuscles } = req.body;
 
     //Find the workout by ID in the DB
@@ -190,7 +185,6 @@ router.post("/users/:userId/workouts/:workoutId/add-exercise", async (req, res) 
       return res.status(404).json({ error: 'Workout not found' });
     }
 
-    //Create a new exercise object
     const newExercise = {
       exerciseId,
       bodyParts,
@@ -203,7 +197,6 @@ router.post("/users/:userId/workouts/:workoutId/add-exercise", async (req, res) 
     //Adds the exercise to workou's exercise array
     workout.exercises.push(newExercise);
 
-    //Saves the updated workout
     await user.save();
 
     res.json({ 

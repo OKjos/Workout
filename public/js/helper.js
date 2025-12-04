@@ -1,12 +1,10 @@
-// Utility functions used across your app
-
 // Capitalizes the first letter of a string
 export function capitalize(str) {
     if (!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Gets current logged-in user ID from session
+// Gets the current logged in user ID from session
 export async function getUserId() {
     try {
         const res = await fetch('/api/current-user');

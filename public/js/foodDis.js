@@ -1,4 +1,4 @@
-//Page updates results from search like when you search for the foods
+//Page updates results from search like when they search for the foods
 import { apiPost } from './api.js';
 import { getUserId } from './helper.js';
 
@@ -41,12 +41,12 @@ export async function macroPiChart(food) {
         let totalCarbs = 0;
         let totalFats = 0;
 
-        const xValues = ["Protein", "Carbs", "Fats"];  // These are LABELS
-        const yValues = [totalProtein, totalCarbs, totalFats];  // These are VALUES
+        const xValues = ["Protein", "Carbs", "Fats"];  
+        const yValues = [totalProtein, totalCarbs, totalFats];  
         const barColors = [
-            "#b91d47",  // Protein
-            "#00aba9",  // Carbs  
-            "#2b5797"   // Fats
+            "#b91d47",  
+            "#00aba9", 
+            "#2b5797"   
         ];
 
     const ctx = document.getElementById('myChart');

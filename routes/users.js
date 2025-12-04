@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 
-// ----- LOGIN -----
+//  LOGIN 
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -24,7 +24,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// ----- GET USER BY ID -----
+// GET USER BY ID 
 router.get('/user/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
