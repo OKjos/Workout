@@ -32,7 +32,8 @@ router.post('/user/:userId/add-to-food', async (req, res) => {
                 protein: Number(protein), 
                 carbs: Number(carbs),
                 fats: Number(fats)
-            }
+            },
+            createdAt: new Date()
         };
 
 
@@ -43,10 +44,8 @@ router.post('/user/:userId/add-to-food', async (req, res) => {
         await user.save();
 
 
-        res.json({ 
-            message: "Food added successfully", 
-            food: newFood
-        });
+        res.json({ success: true, foods: user.foods });
+
 
     } catch (err) {
         console.error("❌ FINAL ERROR:", err.message);
@@ -55,7 +54,50 @@ router.post('/user/:userId/add-to-food', async (req, res) => {
 });
 
 
+router.get('/users/:userId/foods', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await User.findById(userId).select('foods');
 
+        res.json({ foods: user.foods });
+    } catch (error) {
+
+        console.error("Error fetching foods: ", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+})
+
+router.get('/users/:userId/foods-today', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found "});
+        }
+
+
+        const todaysFoods = user.foods.filter(f => {
+            const created = new Date(f.createdAt);
+            const createdDate = created.toISOString().split('T')[0]; // "YYYY-MM-DD"
+            const todayDate = new Date().toISOString().split('T')[0];
+            return createdDate === todayDate;
+        });
+
+        res.status(200).json({ foods: todaysFoods });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
 
 
 module.exports = router;

@@ -30,16 +30,30 @@ export async function addFoodToDay(food) {
 
 
 
-
-export async function macroPiChart(food) {
+export async function macroPiChart() {
     try {
         const userId = await getUserId();
-        const data = await apiGet(`/user/${userId}/foods`)
+        const res = await fetch(`/food/users/${userId}/foods-today`);
+        const data = await res.json();
+
+
+        const foods = data.foods || [];
+        console.log('Fetched foods:', foods);
 
 
         let totalProtein = 0;
         let totalCarbs = 0;
         let totalFats = 0;
+        let totalCalories = 0;
+        
+        foods.forEach(food => {
+            totalProtein += food.macros?.protein || 0;
+            totalCarbs += food.macros?.carbs || 0;
+            totalFats += food.macros?.fats || 0;
+            totalCalories += food.macros?.calories || 0;
+        });
+
+        console.log('Totals:', { totalProtein, totalCarbs, totalFats, totalCalories });  // Debug log
 
         const xValues = ["Protein", "Carbs", "Fats"];  
         const yValues = [totalProtein, totalCarbs, totalFats];  
@@ -51,28 +65,47 @@ export async function macroPiChart(food) {
 
     const ctx = document.getElementById('myChart');
 
-    new Chart(ctx, {
-    type: "pie",
-    data: {
-        labels: xValues,
-        datasets: [{
-        backgroundColor: barColors,
-        data: yValues
-        }]
-    },
-    options: {
-        plugins: {
-        legend: {display:true},
-        title: {
-            display: true,
-            text: "World Wine Production 2018",
-            font: {size:16}
+        if (window.macroChart instanceof window.Chart) {
+            window.macroChart.destroy();
         }
-        }
-    }
-    });
+
+        // Create new chart
+        window.macroChart = new window.Chart(ctx, {
+            type: "pie",
+            data: {
+                labels: xValues,
+                datasets: [{
+                    backgroundColor: barColors,
+                    data: yValues,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        display: true,
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: `Macro Distribution (Total Calories: ${totalCalories})`,
+                        font: { size: 16 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                return `${label}: ${value}g`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
     } catch (error) {
-
+        console.error("Error in macroPiChart:", error);
     }
-
 }
