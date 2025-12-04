@@ -1,0 +1,549 @@
+* {
+padding: 0;
+margin: 0;
+box-sizing: border-box;
+}
+
+
+/* Login CSS */
+.login-section {
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+min-height: 100vh;   
+background: #f3f4f6;  
+max-width: 320px;
+margin: auto;
+padding: 2rem;
+border-radius: 12px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+background-color: #fff;
+text-align: center;
+}
+.login-section h2 {
+margin-bottom: 1.5rem;
+font-size: 1.5rem;
+}
+.login-section input {
+width: 100%;
+padding: 10px;
+margin: 8px 0;
+border: 1px solid #ccc;
+border-radius: 6px;
+font-size: 1rem;
+}
+.login-section button,
+.login-section a {
+width: 100%;
+padding: 10px;
+margin-top: 10px;
+border: none;
+border-radius: 6px;
+font-size: 1rem;
+cursor: pointer;
+transition: background 0.3s;
+}
+.login-submit  {
+background: #2563eb;
+color: white;
+}
+.login-submit:hover {
+background: #1e40af;
+}
+.register-btn {
+background-color: gray;
+text-decoration: none;
+color: white;
+}
+.register-btn:hover {
+background-color: rgb(41, 41, 41);
+}
+
+
+
+
+/* Header */
+.header-container {
+display: flex;
+align-items: center;
+justify-content: center; 
+position: relative;
+background-color: #555555; 
+padding: 30px 0;
+box-shadow: rgba(0, 0, 0, 0.25) 0px 15px 20px -5px;
+}
+
+.site-name {
+position: absolute;
+left: 40px;
+color: #f2c75c;
+font-size: 24px;
+font-weight: 700;
+margin: 0;
+}
+
+.profile-circle {
+position: absolute;
+right: 40px;
+width: 70px;
+height: 70px;
+border-radius: 50%;
+overflow: hidden;
+border: 2px solid #f2c75c;
+cursor: pointer;
+transition: transform 0.3s ease;
+}
+
+.profile-circle:hover {
+transform: scale(1.05);
+}
+
+.profile-circle img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+
+.nav-wrapper {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 20px; 
+background-color: #444; 
+padding: 15px 40px;
+border-radius: 50px; 
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.header-item {
+position: relative;
+padding: 10px 25px;
+border-radius: 8px;
+color: #f2c75c;
+font-size: 16px;
+text-transform: uppercase;
+text-decoration: none;
+background: transparent;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.header-item:hover {
+background: #f2c75c;
+color: #ffffff;
+border-color: #aa8f49;
+text-shadow: 1px 1px 2px #000;
+}
+
+/* Weights input/buttons */
+.search-content, 
+.submit-button, 
+.qr-btn, 
+.type-box, 
+.createRoutineBtn {
+border-radius: 1.5rem;          
+background-color: #444;        
+color: #fff;                    
+border: 2px solid #444;        
+font-size: 16px;
+font-weight: 600;
+padding: 15px 30px;
+text-align: center;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.search-content:hover, 
+.submit-button:hover, 
+.qr-btn:hover, 
+.type-box:hover, 
+.createRoutineBtn:hover {
+background-color: #666;
+border-color: #666;
+}
+.search-box {
+display: flex;
+justify-content: center;
+gap: 20px;
+margin-top: 5%;
+position: relative;
+}
+.search-content {
+padding: 15px 50px; 
+border: 2px solid #666; 
+background-color: #555; 
+color: #fff;
+}
+.search-content:focus {
+outline: none;
+border-color: #888;
+}
+
+.type-box {
+border-radius: 1.5rem;    
+text-align-last: center;   
+appearance: none;          
+background-color: #444;
+color: #fff;
+border: 2px solid #444;
+font-size: 16px;
+font-weight: 600;
+padding: 15px 30px;
+cursor: pointer;
+}
+
+.type-box option {
+text-align: center;
+}
+
+
+
+/* popup form */
+#routineForm {
+display: none;
+position: absolute;
+top: 100%;
+left: 50%;
+transform: translateX(-50%);
+margin-top: 5px;
+background: #fff;
+padding: 20px;             
+width: 250px;             
+border: 2px solid gray;
+border-radius: 10px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+z-index: 10;
+text-align: center;
+}
+#routineForm input {
+width: 100%;               
+padding: 10px 15px;       
+margin-bottom: 10px;       
+border-radius: 5px;       
+border: 1px solid #ccc;
+font-size: 16px;
+}
+#routineForm button {
+width: 100%;               
+padding: 10px 15px;       
+font-size: 16px;
+border-radius: 5px;
+border: none;
+background-color: #444;
+color: white;
+cursor: pointer;
+transition: background 0.3s ease;
+margin-bottom: 4%;
+}
+#routineForm button:hover {
+background-color: #666;
+}
+
+
+/* Routine or workout page*/
+.workout-routine-btn {
+margin-top: 2%;
+text-align: center;
+display: flex;
+gap: 5%;
+justify-content: center;
+}
+
+.workout-page-btn,
+.routine-page-btn {
+border-radius: 1.5rem;          
+background-color: #444;        
+color: #fff;                    
+border: 2px solid #444;        
+font-size: 16px;
+font-weight: 600;
+padding: 15px 30px;
+text-align: center;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.hidden {
+display: none;
+}
+
+.active-tab {
+background: #1a73e8; /* highlight color */
+}
+
+
+/* API output display styles*/
+.weight-results {
+display: grid;
+grid-template-columns: repeat(2, 1fr); 
+gap: 30px;
+padding: 20px;
+margin-top: 2%;
+}
+
+.gif-results {
+display: block;      
+margin: 0 auto;       
+max-width: 100%;      
+height: auto;   
+}
+
+.results {
+border: 3px solid #ccc;
+border-radius: 5px;
+padding: 8px;
+display: grid;
+align-items: center;
+width: max-content;  
+justify-self: center;
+}
+
+.results h1,
+.results h2 {
+margin: 10px 0;
+text-align: center;
+}
+
+
+.add-to-routine {
+border: 1px solid #ccc;
+border-radius: 5px;
+padding: 8px;
+text-align: center;   
+font-size: 16px;
+font-weight: 600;
+cursor: pointer;
+justify-self: center;  
+}
+
+.workout-btn {
+border-radius: 1.5rem;          
+background-color: #444;        
+color: #fff;                    
+border: 2px solid #444;        
+font-size: 16px;
+font-weight: 600;
+padding: 15px 30px;
+text-align: center;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.remove-from-routine {
+border: 1px solid #ccc;
+border-radius: 5px;
+padding: 8px;
+text-align: center;   
+font-size: 16px;
+font-weight: 600;
+cursor: pointer;
+justify-self: center; 
+}
+
+.top-bar h2 {
+text-decoration: underline;
+text-decoration-color: rgb(248, 248, 248)#444;
+}
+
+.workout-dropdown {
+margin-top: 5%;
+width: 35%;
+padding: 2%;
+text-align: center;
+border-radius: 1.5rem;          
+}
+
+
+
+/* Routine buttons to display workouts/page title*/
+.routine-title-section,
+.routine-results {
+display: flex;
+justify-content: center;
+align-items: center;
+margin-top: 2%;
+gap: 2%;
+}
+.routine-display {
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+margin-top: 2%;
+}
+
+
+
+
+
+
+/* routine display styles */
+.routine-library-header {
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.routine-results {
+display: flex;
+justify-content: center;
+align-items: center;
+margin-top: 2%;
+}
+
+.routine-con {
+display: flex;
+flex-direction: column;
+align-items: center;
+margin: 0 auto;
+max-width: 100%;
+width: 100%;
+gap: 20px;
+padding: 20px;
+}
+
+.top-bar {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 10%;
+width: 50%;
+}
+
+.exercise-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+gap: 20px;
+width: 100%;
+justify-items: center;
+}
+
+.exercise-card {
+border: 1px solid #ccc;
+border-radius: 10px;
+padding: 15px;
+text-align: center;
+font-size: 32px;
+}
+
+.hidden {
+display: none;
+}
+
+#closeRoutine {
+border: 1px solid #ccc;
+border-radius: 5px;
+padding: 8px;
+text-align: center;
+}
+
+#closeRoutine:hover {
+background-color: white;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Food results section */
+#food-results {
+display: grid;
+grid-template-columns: repeat(2, 1fr); 
+gap: 30px;
+padding: 20px;
+margin-top: 2%;
+}
+
+.food-item-img {
+display: block;      
+margin: 0 auto;       
+max-width: 100%;      
+height: auto;         
+}
+
+.food-results h1,
+.food-results h2 {
+margin: 10px 0;
+text-align: center;
+}
+
+.food-display-container {
+border: 3px solid #ccc;
+border-radius: 5px;
+padding: 8px;
+display: grid;
+}
+
+.add-to-food {
+border: 1px solid #ccc;
+border-radius: 5px;
+padding: 8px;
+text-align: center;   
+font-size: 16px;
+font-weight: 600;
+cursor: pointer;
+justify-self: center;  
+}
+
+
+
+/* Home page */
+.home-pg-container {
+display: grid;
+grid-template-columns: repeat(2, 1fr); 
+gap: 30px;
+padding: 20px;
+justify-items: center;
+align-items: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+canvas {
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+#legend {
+    margin-left: 20px;
+}
+
+#legend section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.color-box {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}

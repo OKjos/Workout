@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/styles.css">
+
+</head>
+<body>
+    <header class="header-container">
+        <h1 class="site-name">MyFitnessApp</h1>
+
+        <nav class="nav-wrapper">
+            <a class="header-item" href="/home">Home</a>
+            <a class="header-item" href="/food">Food/Recipes</a>
+            <a class="header-item" href="/workout">Weights</a>
+            <a class="header-item" href="/profile">Profile</a>
+        </nav>
+
+        <section class="profile-circle">
+            <img src="https://via.placeholder.com/50" alt="Profile Picture" />
+        </section>
+    </header>
+
+
+    <section class="workout-routine-btn">
+        <button class="workout-page-btn" id="workout-page-btn">Workout search</button>
+        <button class="routine-page-btn" id="routine-page-btn">Routines</button>
+    </section>
+
+
+
+
+
+     <!-- Have to add a hidden view to this when the other button is done -->
+    <section class="search-box" id="search-box">
+        <input type="text" class="search-content" id="weight-input" placeholder="Enter to search">
+        <button type="submit" class="submit-button" id="weight-button">Search</button>
+        <select class="type-box" id="search-type">
+            <option class="type-box-options" value="bodypart">Bodypart</option>
+            <option class="type-box-options" value="musclename">Muscle Name</option>
+            <option class="type-box-options" value="equipment">Equipments</option>
+            <option class="type-box-options" value="sport">Sport</option>
+        </select>
+        <section id="extra-inputs" style="display: none;">
+            <label>Welight (lbs): <input type="number" id="weight-value"></label>
+            <label>Duration (minutes): <input type="number" id="time-value"></label>
+        </section>
+
+        <button class="createRoutineBtn" id="createRoutineBtn">Create Workout Routine</button>
+        
+
+        <section class="routineForm" id="routineForm" style="display:none">
+            <input type="text" class="routineName" id="routineName" placeholder="Enter routine name">
+            <button id="submitRoutine" class="submitRoutine">Submit</button>
+            <button class="closeRoutineBtn" id="closeRoutineBtn">Close</button>
+        </section>
+        
+
+        <section id="failed-output"></section>
+    </section>
+
+    <section class="weight-results" id="results"></section>
+
+
+
+
+    <!-- Get the routines to show up and be able to display them -->
+    <section id="routine-library" class="hidden">
+        <h1 class="routine-library-header">Routines</h1>
+        <section class="routine-results" id="routine-results">
+
+        </section>
+        <section class="hidden" id="routine-details">
+
+        </section>
+    </section>
+    
+
+
+    <section class="pick-routine" id="routine-option" style="display: none;">
+            
+    </section>
+
+    <script type="module" src="/js/index.js"></script>
+
+</body>
+</html>
