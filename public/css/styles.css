@@ -5,6 +5,13 @@ box-sizing: border-box;
 }
 
 
+
+
+
+
+
+
+
 /* Login CSS */
 .login-section {
 display: flex;
@@ -59,6 +66,11 @@ color: white;
 .register-btn:hover {
 background-color: rgb(41, 41, 41);
 }
+
+
+
+
+
 
 
 
@@ -136,6 +148,14 @@ border-color: #aa8f49;
 text-shadow: 1px 1px 2px #000;
 }
 
+
+
+
+
+
+
+
+
 /* Weights input/buttons */
 .search-content, 
 .submit-button, 
@@ -199,6 +219,12 @@ text-align: center;
 
 
 
+
+
+
+
+
+
 /* popup form */
 #routineForm {
 display: none;
@@ -241,6 +267,13 @@ background-color: #666;
 }
 
 
+
+
+
+
+
+
+
 /* Routine or workout page*/
 .workout-routine-btn {
 margin-top: 2%;
@@ -269,8 +302,11 @@ display: none;
 }
 
 .active-tab {
-background: #1a73e8; /* highlight color */
+background: #1a73e8; 
 }
+
+
+
 
 
 /* API output display styles*/
@@ -356,6 +392,8 @@ border-radius: 1.5rem;
 
 
 
+
+
 /* Routine buttons to display workouts/page title*/
 .routine-title-section,
 .routine-results {
@@ -411,24 +449,11 @@ gap: 10%;
 width: 50%;
 }
 
-.exercise-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-gap: 20px;
-width: 100%;
-justify-items: center;
-}
-
-.exercise-card {
+#toggleTimerBtn {
 border: 1px solid #ccc;
-border-radius: 10px;
-padding: 15px;
+border-radius: 5px;
+padding: 8px;
 text-align: center;
-font-size: 32px;
-}
-
-.hidden {
-display: none;
 }
 
 #closeRoutine {
@@ -442,6 +467,109 @@ text-align: center;
 background-color: white;
 }
 
+
+
+
+
+
+
+
+
+.exercise-grid {
+display: grid;
+grid-template-columns: repeat(5, 220px);gap: 20px;
+width: 100%;
+justify-content: center;     
+justify-items: center;
+align-items: center;
+}
+
+.exercise-card {
+display: flex;              
+justify-content: space-between;
+gap: 20px;
+border: 1px solid #ccc;
+border-radius: 10px;
+padding: 15px;
+width: 100%;                
+box-sizing: border-box;
+}
+
+.exercise-left {
+display: flex;
+flex-direction: column;    
+gap: 8px;
+}
+
+
+.exercise-left p {
+text-align: center;
+font-size: 30px;
+}
+
+
+
+
+
+
+
+
+
+
+.set-section {
+display: flex;
+flex-direction: column;
+gap: 8px;
+min-width: 150px;          
+text-align: center;
+}
+
+.set-headers {
+display: flex;
+justify-content: space-between;
+font-weight: 600;
+border-bottom: 1px solid #ccc;
+padding-bottom: 5px;
+}
+
+.set-headers span {
+width: 33%;
+text-align: center;
+}
+
+.set-inputs {
+display: flex;
+justify-content: space-between;
+gap: 5px;
+}
+
+.set-inputs span {
+width: 33%;
+line-height: 32px;
+text-align: center;
+}
+
+.set-inputs input {
+width: 33%;
+padding: 5px;
+text-align: center;
+border: 1px solid #ccc;
+border-radius: 5px;
+}
+
+.add-set {
+border: 1px solid #ccc;
+border-radius: 5px;
+padding: 8px;
+text-align: center; 
+}
+
+
+
+
+.hidden {
+display: none;
+}
 
 
 
@@ -497,6 +625,16 @@ justify-self: center;
 
 
 
+
+
+
+
+
+
+
+
+
+
 /* Home page */
 .home-pg-container {
 display: grid;
@@ -528,22 +666,22 @@ align-items: center;
 
 
 canvas {
-    border: 1px solid #ccc;
-    background-color: #fff;
+border: 1px solid #ccc;
+background-color: #fff;
 }
 
 #legend {
-    margin-left: 20px;
+margin-left: 20px;
 }
 
 #legend section {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
+display: flex;
+align-items: center;
+margin-bottom: 5px;
 }
 
 .color-box {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
+width: 20px;
+height: 20px;
+margin-right: 10px;
 }

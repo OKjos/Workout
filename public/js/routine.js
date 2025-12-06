@@ -39,23 +39,41 @@ export async function showWorkoutDetails(workout) {
     section.innerHTML = `
         <section class="routine-con">
             <section class="top-bar">
+                <h1 id="timer">Timer</h1>
                 <h2>${actualWorkout.workoutName}</h2>
                 <button id="closeRoutine">Close Routine</button>
+                <button id="toggleTimerBtn">Start</button>
             </section>
-            <section class="exercise-grid">
-                ${actualWorkout.exercises.map(ex => `
-                <section class="exercise-card">
-                    <img src="${ex.gifUrl}">
-                    <p>${capitalize(ex.bodyParts[0])}</p>
-                    <p>${capitalize(ex.targetMuscles[0])}</p>
-                    <p>${capitalize(ex.secondaryMuscles[0])}</p>
-                    <button 
-                        class="remove-from-routine"
-                        data-workout-id="${actualWorkout._id}"
-                        data-exercise-id="${ex.exerciseId}"
-                    >
-                    Remove
-                    </button>
+                <section class="exercise-grid">
+                    ${actualWorkout.exercises.map(ex => `
+                    <section class="exercise-card">
+                    <section class="exercise-left">
+                        <img src="${ex.gifUrl}">
+                        <p>${capitalize(ex.bodyParts[0])}</p>
+                        <p>${capitalize(ex.targetMuscles[0])}</p>
+                        <p>${capitalize(ex.secondaryMuscles[0])}</p>
+                        <button 
+                            class="remove-from-routine"
+                            data-workout-id="${actualWorkout._id}"
+                            data-exercise-id="${ex.exerciseId}">
+                        Remove
+                        </button>
+
+
+                    <section class="set-section">
+                        <section class="set-headers">
+                            <span>SET</span>
+                            <span>REPS</span>
+                            <span>LBS</span>
+                        </section>
+                        <section class="set-inputs">
+                        <span>1</span>
+                            <input type="number" placeholder="Reps">
+                            <input type="number" placeholder="Lbs">
+                        </section>
+                    </section>
+                    <button class="add-set">Add set</button>
+                    </section>
                 </section>
             `).join("")}
             </section>
@@ -80,6 +98,55 @@ export async function showWorkoutDetails(workout) {
             btn.closest(".exercise-card").remove();
         });
     });
+
+
+    section.addEventListener("click", (e) => {
+        if (e.target.classList.contains("add-set")) {
+
+            const exerciseCard = e.target.closest(".exercise-card");
+            const setSection = exerciseCard.querySelector(".set-section");
+
+            const newSet = document.createElement("section");
+            newSet.classList.add("set-inputs");
+
+            newSet.innerHTML = `
+                <span>1</span>
+                    <input type="number" placeholder="Reps">
+                    <input type="number" placeholder="Lbs">
+            `;
+
+            setSection.appendChild(newSet);
+        }
+    });
+
+
+    let seconds = 0;
+    let interval = null;
+
+    const timerDisplay = document.getElementById('timer');
+    const toggleBtn = document.getElementById('toggleTimerBtn');
+
+    function formatTime(sec) {
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    }
+
+    toggleBtn.addEventListener("click", () => {
+        if (interval === null) {
+            interval = setInterval(() => {
+                seconds++;
+                timerDisplay.textContent = formatTime(seconds);
+            }, 1000);
+
+            toggleBtn.textContent = "Stop";
+        } else {
+            clearInterval(interval);
+            interval = null;
+
+            toggleBtn.textContent = "Start";
+        }
+    })
 
 
     document.getElementById("closeRoutine").onclick = () => {

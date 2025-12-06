@@ -13,8 +13,12 @@ const UserSchema = new mongoose.Schema({
       bodyParts: { type: [String], required: true },
       gifUrl: { type: String },
       targetMuscles: { type: [String]},
-      secondaryMuscles: { type: [String] }
-    }
+      secondaryMuscles: { type: [String] },
+      sets: [{
+        weight: { type: Number, required: true },
+        reps: { type: Number, required: true }
+      }]
+    } 
   ],
   createdAt: { 
     type: Date, 
