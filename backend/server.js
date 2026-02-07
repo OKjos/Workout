@@ -26,24 +26,24 @@ app.use(session({
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../web')));
 
 
 
 
 
 // Routes
-//login
+// /user/* routes (login, logout, etc.)
 app.use('/user', require('./routes/users'));
-// User profile pages
+// /profile/* routes (user profile page)
 app.use('/profile', require('./routes/profile'));
-// User registration
+// /register/* routes (signup)
 app.use('/register', require('./routes/register'));
-// Workout-related routes
+// /workouts/* routes (workout tracking)
 app.use('/workouts', require('./routes/workouts'));
-//Home page
+// /home/* routes (dashboard)
 app.use('/home', require('./routes/home'));
-//Food page
+// /food/* routes (nutrition tracking)
 app.use('/food', require('./routes/food'));
 
 
@@ -65,9 +65,14 @@ app.use('/food', require('./routes/food'));
 
 // Serve login page
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+  res.sendFile(path.join(__dirname, '..', 'web', 'login.html'));
 });
 
+
+
+
+// Frontend can check who's logged in
+// Returns: { _id, username } or 401 error if not logged in
 app.get('/api/current-user', (req, res) => {
   if (req.session.userId) {
     res.json({
@@ -79,18 +84,23 @@ app.get('/api/current-user', (req, res) => {
   }
 });
 
+
+
 app.get('/workout', (req, res) => {
   res.redirect('/workouts');
 });
 
 app.get('/home', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'home.html'));
+  res.sendFile(path.join(__dirname, '..', 'web', 'home.html'));
 })
 
-app.get('/food', (req, res) => {
-  res.redirect('/food')
-})
 
+
+// ROUTE: Search for food from OpenFoodFacts API
+// GET /api/food?q=chicken
+// Purpose: When user searches for food, this fetches data from external API
+// Query param: q = search term (e.g., "chicken breast")
+// Returns: Food data with nutrition info
 app.get("/api/food", async (req, res) => {
     try {
         const query = req.query.q;
@@ -109,6 +119,7 @@ app.get("/api/food", async (req, res) => {
     }
 });
 
+//Start server
 app.listen(port, () => {
   console.log(`✅ Listening at http://localhost:${port}`);
 });

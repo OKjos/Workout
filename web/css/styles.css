@@ -268,9 +268,37 @@ background-color: #666;
 
 
 
+/* Profile buttons*/
+.users-info {
+margin-top: 2%;
+text-align: center;
+display: flex;
+gap: 5%;
+justify-content: center;
+}
 
 
 
+.macro-info-btn,
+.body-info-btn,
+.history-info-btn {
+border-radius: 1.5rem;          
+background-color: #444;        
+color: #fff;                    
+border: 2px solid #444;        
+font-size: 16px;
+font-weight: 600;
+padding: 15px 30px;
+text-align: center;
+cursor: pointer;
+transition: all 0.3s ease; 
+}
+
+.macro-info-btn:hover,
+.body-info-btn:hover,
+.history-info-btn:hover {
+background-color: #666666; 
+}
 
 
 
@@ -295,6 +323,11 @@ padding: 15px 30px;
 text-align: center;
 cursor: pointer;
 transition: all 0.3s ease;
+}
+
+.workout-page-btn:hover,
+.routine-page-btn:hover {
+background-color: #666666; 
 }
 
 .hidden {
@@ -566,10 +599,6 @@ text-align: center;
 
 
 
-
-.hidden {
-display: none;
-}
 
 
 

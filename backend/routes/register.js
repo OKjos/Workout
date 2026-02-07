@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
 router.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'register.html'));
+  res.sendFile(path.join(__dirname, '..', '..', 'web', 'register.html'));
 });
 
 router.post('/', async (req, res) => {

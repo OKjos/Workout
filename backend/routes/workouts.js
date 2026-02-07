@@ -18,10 +18,11 @@ const { isLoggedIn } = require('../middleware/auth');
 
 
 
-
-//Route that serves the workout page it requires the user to be logged in
+// Serve the workout page
+// GET /workouts
+// Purpose: Shows the workout tracking page to logged-in users
 router.get('/', isLoggedIn, (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'weight.html'));
+  res.sendFile(path.join(__dirname, '..', '..', 'web', 'weight.html'));
 });
 
 
@@ -34,12 +35,18 @@ router.get('/', isLoggedIn, (req, res) => {
 
 
 
-//create a new workout (index.js submitRoutine --> This)
+//create a new workout (
+// POST /workouts
+// Purpose: Creates a new empty workout plan for a user
+// Body: { workoutName: "Push Day", userId: "12345" }
+// Returns: { success: true, workout: { _id, workoutName, exercises: [] } }
 router.post('/', async (req, res) => {
  try {
 
+  // Get data from request body
   const { workoutName, userId } = req.body;
   
+  // Validate required fields
   if (!workoutName || !userId) {
     return res.status(400).json({
       success: false,
@@ -47,7 +54,7 @@ router.post('/', async (req, res) => {
     });
   }
 
-  //Makes sure the user exists
+  // Find the user in database
   const user = await User.findById(userId);
   if (!user) {
     return res.status(404).json({
@@ -56,17 +63,21 @@ router.post('/', async (req, res) => {
     });
   }
 
-  //Create a new workout doc
+  // Create new workout and add to user's workouts array
   user.workouts.push({
     workoutName: workoutName,
+    // Start with empty exercises array
     exercises: []
   });
 
+  // Save the updated user document
   await user.save();
 
+  // Get the newly created workout (last item in array)
   const newWorkout = user.workouts[user.workouts.length - 1];
 
 
+  // Send back the created workout
   res.status(201).json({
     success: true,
     message: 'Workout created successfully',
@@ -93,11 +104,17 @@ router.post('/', async (req, res) => {
 
 
 
-//returns all users workout plans
+// Get all workouts for a user
+// GET /workouts/users/:userId/workouts
+// Purpose: Returns all workout plans for a specific user
+// Example: GET /workouts/users/12345/workouts
+// Returns: { success: true, workouts: [...] }
 router.get('/users/:userId/workouts', async (req, res) => {
   try {
+    // Get userId from URL parameter
     const { userId } = req.params;
 
+    // Find the user
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({
@@ -105,6 +122,8 @@ router.get('/users/:userId/workouts', async (req, res) => {
         message: "User not found"
       });
     }
+
+    // Return all user's workouts
     res.json({
       success: true,
       workouts: user.workouts
@@ -129,16 +148,23 @@ router.get('/users/:userId/workouts', async (req, res) => {
 
 
 
-//Get specific workout by ID
+// Get a specific workout by ID
+// GET /workouts/users/:userId/workouts/:workoutId
+// Purpose: Returns a single workout plan with all its exercises
+// Example: GET /workouts/users/12345/workouts/67890
+// Returns: { success: true, workout: { workoutName, exercises: [...] } }
 router.get('/users/:userId/workouts/:workoutId', async (req, res) => {
   try {
+    // Get both IDs from URL parameters
     const { workoutId, userId } = req.params;
     
+    // Find the user
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found"});
     }
 
+    // Find specific workout within user's workouts array using Mongoose .id() method
     const workout = user.workouts.id(workoutId);
     if (!workout) {
       return res.status(404).json({ 
@@ -147,13 +173,14 @@ router.get('/users/:userId/workouts/:workoutId', async (req, res) => {
       });
     }
 
+    // Return the workout
     res.json({
       success: true,
       workout
     });
 
     } catch (error) {
-    Console.error('Eror fetching workout: ', error);
+    console.error('Eror fetching workout: ', error);
     res.status(500).json({ error: error.message });
   }
 })
@@ -166,32 +193,39 @@ router.get('/users/:userId/workouts/:workoutId', async (req, res) => {
 
 
 
-//add workouts to routine
+// Add an exercise to a workout
+// POST /workouts/users/:userId/workouts/:workoutId/add-exercise
+// Purpose: Adds a new exercise to an existing workout plan
+// Body: { exerciseId, bodyParts, gifUrl, targetMuscles, secondaryMuscles }
+// Returns: { success: true, workout: { ... } }
 router.post("/users/:userId/workouts/:workoutId/add-exercise", async (req, res) => {
   try {
 
     const { workoutId, userId } = req.params;
 
+    // Get exercise data from request body
     const { exerciseId, bodyParts, gifUrl, targetMuscles, secondaryMuscles } = req.body;
 
-    //Find the workout by ID in the DB
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found"});
     }
 
+    // Find the specific workout within user's workouts array
     const workout = user.workouts.id(workoutId);
     if (!workout) {
       return res.status(404).json({ error: 'Workout not found' });
     }
 
+    // Create new exercise object
     const newExercise = {
       exerciseId,
       bodyParts,
       gifUrl, 
       targetMuscles,
       secondaryMuscles,
-      addedAt: new Date()
+      // Will be empty initially, user adds sets later
+      sets: []
     };
 
     //Adds the exercise to workou's exercise array
@@ -222,12 +256,15 @@ router.post("/users/:userId/workouts/:workoutId/add-exercise", async (req, res) 
 
 
 
-//Delete a workout from the routine
+// Remove an exercise from a workout
+// DELETE /workouts/users/:userId/workouts/:workoutId/exercises/:exerciseId
+// Purpose: Removes a specific exercise from a workout plan
+// Example: DELETE /workouts/users/12345/workouts/67890/exercises/bench-press
+// Returns: { success: true, message: "Exercise removed" }
 router.delete('/users/:userId/workouts/:workoutId/exercises/:exerciseId', async (req, res) => {
   try {
     const { userId, workoutId, exerciseId } = req.params;
 
-    //Find the workout
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
@@ -238,14 +275,15 @@ router.delete('/users/:userId/workouts/:workoutId/exercises/:exerciseId', async 
       return res.status(404).json({ success: false, message: "Workout not found" });
     }
 
-    //Removes the exercise from the array
+    // Filter out the exercise with matching exerciseId
+    // .filter() creates a new array excluding the exercise to delete
     workout.exercises = workout.exercises.filter(
       ex => ex.exerciseId !== exerciseId
     );
 
     await user.save();
 
-
+    // Confirm deletion
     res.json({ 
       success: true,
       message: "Exercise removed",
@@ -266,7 +304,7 @@ router.delete('/users/:userId/workouts/:workoutId/exercises/:exerciseId', async 
 
 
 
-//delete all user routines
+// Delete ALL workouts for a user
 router.delete('/users/:userId/workouts', async (req, res) => {
     const { userId } = req.params;
     const user = await User.findById(userId);
@@ -278,6 +316,7 @@ router.delete('/users/:userId/workouts', async (req, res) => {
       });
     }
   
+  // Clear the workouts array (empty array = all deleted)
   user.workouts = [];
   await user.save();
   

@@ -4,7 +4,7 @@ const path = require('path');
 const { isLoggedIn } = require('../middleware/auth');
 
 router.get('/', isLoggedIn, (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'home.html'));
+  res.sendFile(path.join(__dirname, '..', '..', 'web', 'profile.html'));
 });
 
 module.exports = router;

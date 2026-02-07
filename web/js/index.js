@@ -83,8 +83,39 @@ document.addEventListener("DOMContentLoaded", () => {
     
 
 
+
+    function profileButtons() {
+    const macroBtn = document.getElementById('macro-info-btn');
+    const bodyBtn = document.getElementById('body-info-btn');
+    const historyBtn = document.getElementById('history-info-btn');
+
+    const macroChart = document.getElementById('macro-chart');
+    const bodyInfo = document.getElementById('body-info');
+    const historyInfo = document.getElementById('history-info');
+
+    bodyBtn.addEventListener('click', () => {
+        macroChart.classList.add('hidden');
+        bodyInfo.classList.remove('hidden');
+        historyInfo.classList.add('hidden');
+    })
+
+    historyBtn.addEventListener('click', () => {
+        macroChart.classList.add('hidden');
+        bodyInfo.classList.add('hidden');
+        historyInfo.classList.remove('hidden');
+    })
+
+    macroBtn.addEventListener('click', () => {
+        macroChart.classList.remove('hidden');
+        bodyInfo.classList.add('hidden');
+        historyInfo.classList.add('hidden');
+    })
+}
+
+
     // ---------------------------
     // Load Workouts Initially
     // ---------------------------
     loadWorkouts();
+    profileButtons();
 });
