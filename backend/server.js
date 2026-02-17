@@ -46,6 +46,7 @@ app.use('/home', require('./routes/home'));
 // /food/* routes (nutrition tracking)
 app.use('/food', require('./routes/food'));
 
+app.use('/body', require('./routes/bodyWeight'))
 
 
 

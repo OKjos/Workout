@@ -9,14 +9,32 @@ const UserSchema = new mongoose.Schema({
     workoutName: String,
       exercises: [
     {
-      exerciseId: { type: String, required: true },
-      bodyParts: { type: [String], required: true },
-      gifUrl: { type: String },
-      targetMuscles: { type: [String]},
-      secondaryMuscles: { type: [String] },
+      exerciseId: { 
+        type: String, 
+        required: true 
+    },
+      bodyParts: { 
+        type: [String], 
+        required: true 
+    },
+      gifUrl: { 
+        type: String 
+    },
+      targetMuscles: { 
+        type: [String]
+    },
+      secondaryMuscles: { 
+        type: [String] 
+    },
       sets: [{
-        weight: { type: Number, required: true },
-        reps: { type: Number, required: true }
+        weight: { 
+            type: Number, 
+            required: true 
+        },
+        reps: { 
+            type: Number, 
+            required: true 
+        }
       }]
     } 
   ],
@@ -59,6 +77,18 @@ const UserSchema = new mongoose.Schema({
                 type: Date,
                 default: Date.now 
             }
+        }
+    ],
+    bodyWeight: [
+        {
+        dailyWeight: {
+            type: Number,
+            required: true
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now 
+            } 
         }
     ],
     createdAt: {

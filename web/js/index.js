@@ -3,6 +3,7 @@ import { loadWorkouts } from "./workouts.js";
 import { macroPiChart } from "./foodDis.js";
 import { openRoutineForm, closeRoutineForm, createRoutine, showWorkoutDetails } from "./routine.js";
 
+
 document.addEventListener("DOMContentLoaded", () => {
     const weightBtn = document.getElementById('weight-button');
     const searchExercise = document.getElementById('weight-input');
