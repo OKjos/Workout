@@ -30,12 +30,20 @@ export async function bodyWeightChart(input) {
         const data = await res.json();
 
         console.log("data from DB:", data);
+        //.map pulls just the weight numbers from the array and then ...weights unpacks it and
+        //compares the values then ±30 the value
         const weights = data.map(entry => entry.dailyWeight);
-        const minWeight = Math.min(...weights) - 30;
-        const maxWeight = Math.max(...weights) + 30;
+        const minWeight = Math.min(...weights) - 20;
+        const maxWeight = Math.max(...weights) + 20;
 
 
 
+        data.forEach(entry => {
+            const items = document.createElement("p");
+            const date = new Date(entry.createdAt).toLocaleDateString();
+            items.textContent = `${date} - ${entry.dailyWeight} lbs`;
+            document.getElementById("weight-log").appendChild(items);
+        });
 
 
         chartInstance = new Chart("bodyWeightChart", {
@@ -45,8 +53,8 @@ export async function bodyWeightChart(input) {
             label: "Body Weight (lbs)",
             fill: false,
             lineTension: 0,
-            backgroundColor: "rgba(0,0,255,1.0)",
-            borderColor: "rgba(0,0,255,0.1)",
+            backgroundColor: "rgba(0,255,255,3.0)",
+            borderColor: "rgba(0, 255, 255, 0.1)",
             data: data.map(entry => ({
                 y: entry.dailyWeight,
                 x: new Date(entry.createdAt).getDate()
@@ -69,7 +77,7 @@ export async function bodyWeightChart(input) {
                     type: 'linear',
                     min: 1,
                     max: 31,
-                    ticks: { stepSize: 1},
+                    ticks: { stepSize: 5 },
                     title: { display: true, text: "Day of Month" },
                     grid: { drawOnChartArea: true }
                 },
@@ -77,7 +85,7 @@ export async function bodyWeightChart(input) {
                     type: 'linear',
                     min: minWeight,
                     max: maxWeight,
-                    ticks: { stepSize: 1 },
+                    ticks: { stepSize: 5 },
                     title: { display: true, text: "Body Weight (lbs)" },
                     grid: { drawOnChartArea: true }
                 }

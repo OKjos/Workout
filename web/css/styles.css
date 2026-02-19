@@ -714,3 +714,65 @@ width: 20px;
 height: 20px;
 margin-right: 10px;
 }
+
+
+/* Profile Body Measurements*/
+.body-inputs {
+display: flex;
+flex-direction: row;
+flex-wrap: wrap;
+justify-content: center;
+align-items: center;
+padding: 2%;
+gap: 1%;
+}
+
+.body-inputs h1 {
+width: 100%;
+text-align: center;
+padding: 8px;
+}
+
+.body-submit {
+border: 1px solid #ccc;
+border-radius: 5px;
+padding: 8px;
+text-align: center; 
+}
+
+.body-inputbox-class {
+border: 1px solid #ccc;
+border-radius: 5px;
+padding: 8px;
+text-align: center; 
+}
+
+.date-entry-log {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+        "header header"
+        "graph  log";
+}
+
+.date-entry-log h1 {
+    margin-top: 1%;
+    width: 100%;
+    grid-area: header;
+    text-align: center;
+}
+
+.date-entry-log p {
+display: flex;
+justify-content: center;
+padding: 8px;
+}
+
+#bodyWeightChart {
+    grid-area: graph;
+}
+
+#weight-log {
+    grid-area: log;
+    align-self: start;
+}

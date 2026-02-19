@@ -10,6 +10,9 @@ router.get('/', isLoggedIn, (req, res) => {
 });
 
 
+
+
+//Looks up the user in MongoDB by their ID and then returns their entire bodyWeight array
 router.get('/users/:userId/bodyWeight', async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
@@ -22,6 +25,9 @@ router.get('/users/:userId/bodyWeight', async (req, res) => {
     }
 });
 
+
+
+//Finds the user and pushes a new dailyWeight object to their bodyWeight array and saves the update
 router.post('/users/:userId/bodyWeight', async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
@@ -29,6 +35,9 @@ router.post('/users/:userId/bodyWeight', async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
+        //req.body.dailyWeight is the weight value sent from the frontend in the requested body
+        //.push then sends it back as a new object into the users bodyWeight array
+        //user.bodyWeight.push is telling where to go and put the new value coming from the frontend (req.body.dailyWeight)
         user.bodyWeight.push({ dailyWeight: req.body.dailyWeight })
         await user.save();
 
