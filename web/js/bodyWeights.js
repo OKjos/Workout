@@ -38,12 +38,33 @@ export async function bodyWeightChart(input) {
 
 
 
+
+
+
+
+        
+        const bodyHeader = document.createElement("h1");
+        bodyHeader.textContent = `Daily Measurements`;
+        document.getElementById('weight-log').appendChild(bodyHeader);
+
+        const chartHeader = document.createElement("h1");
+        chartHeader.textContent = `Weight Chart`;
+        document.getElementById("bodyChart").prepend(chartHeader);
+
+
+
+
+
+
+
+
         data.forEach(entry => {
             const items = document.createElement("p");
             const date = new Date(entry.createdAt).toLocaleDateString();
             items.textContent = `${date} - ${entry.dailyWeight} lbs`;
             document.getElementById("weight-log").appendChild(items);
         });
+
 
 
         chartInstance = new Chart("bodyWeightChart", {

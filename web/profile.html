@@ -23,14 +23,6 @@
     </header>
 
     <section>
-        <img>
-        <h1 class="pf-name">Name</h1>
-    </section>
-
-    <a>Statistics</a>
-    <a>Exercises</a>
-    <br>
-    <br>
 
     <section class="users-info">
         <button class="macro-info-btn" id="macro-info-btn">Macro Intake</button>
@@ -39,8 +31,13 @@
     </section>
 
     <section id="macro-chart" >
-        <canvas id="myChart" style="width:100%;max-width:600px" ></canvas>        
-        <section id="legend"></section>
+        <h1>Macro Intake</h1>
+        <section id="macro-container" class="macro-container">
+            <section id="chartHeader">
+                <canvas id="myChart" ></canvas>        
+            </section>
+            <section id="foods-added"></section>
+        </section>
     </section>
 
 
@@ -50,9 +47,14 @@
             <input placeholder="Input body weight" class="body-inputbox-class" id="body-inputbox-id">
             <button class="body-submit" id="body-submit-id">Submit</button>
         </section>
+
+
+
         <section class="date-entry-log" id="entry-log">
             <h1>Measurements</h1>
-            <canvas id="bodyWeightChart" style="width:100%;max-width:800px"></canvas>
+            <section id="bodyChart">
+                <canvas id="bodyWeightChart" style="width:100%;max-width:800px"></canvas>
+            </section>
             <section id="weight-log"></section>
         </section>
     </section>
@@ -65,6 +67,7 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <script type="module" src="/js/index.js"></script>
     <script type="module" src="./js/bodyWeights.js"></script>
 </body>

@@ -6,7 +6,9 @@ box-sizing: border-box;
 
 
 
-
+body {
+    font-family: Arial, sans-serif;
+}
 
 
 
@@ -699,20 +701,46 @@ border: 1px solid #ccc;
 background-color: #fff;
 }
 
-#legend {
-margin-left: 20px;
+#macro-container {
+display: grid;
+grid-template-columns: 1fr 1fr;
+grid-template-areas: 
+    "chart foods"
+    "legend foods";
+padding: 20px;
+    align-items: start;
 }
 
-#legend section {
+.macro-container h1 {
+margin-top: 1%;
+width: 100%;
+grid-area: header;
+text-align: center;
+}
+
+.macro-container p {
 display: flex;
-align-items: center;
-margin-bottom: 5px;
+justify-content: center;
+padding: 8px;
 }
 
-.color-box {
-width: 20px;
-height: 20px;
-margin-right: 10px;
+#myChart {
+grid-area: chart;
+max-width: 800px;
+max-height: 800px;
+}
+
+#macro-chart {
+    text-align: center;
+    margin-top: 2%;
+}
+
+#foods-added {
+grid-area: foods;
+}
+
+#foods-added h1 {
+    margin-bottom: 2%
 }
 
 
@@ -748,18 +776,18 @@ text-align: center;
 }
 
 .date-entry-log {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: 
-        "header header"
-        "graph  log";
+display: grid;
+grid-template-columns: 1fr 1fr;
+grid-template-areas: 
+    "header header"
+    "graph  log";
 }
 
 .date-entry-log h1 {
-    margin-top: 1%;
-    width: 100%;
-    grid-area: header;
-    text-align: center;
+margin-top: 1%;
+width: 100%;
+grid-area: header;
+text-align: center;
 }
 
 .date-entry-log p {
@@ -769,15 +797,13 @@ padding: 8px;
 }
 
 #bodyWeightChart {
-    grid-area: graph;
+grid-area: graph;
 }
 
 #weight-log {
-    grid-area: log;
-    align-self: start;
+grid-area: log;
+align-self: start;
 }
-
-
 
 
 
@@ -792,16 +818,16 @@ padding: 8px;
 
 /* TEST */
 #popup-Add {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #333;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 8px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  z-index: 1000;
+position: fixed;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%);
+background: #333;
+color: white;
+padding: 10px 20px;
+border-radius: 8px;
+opacity: 0;
+transition: opacity 0.3s ease;
+pointer-events: none;
+z-index: 1000;
 }

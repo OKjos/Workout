@@ -69,9 +69,35 @@ export async function macroPiChart() {
             window.macroChart.destroy();
         }
 
+        foods.forEach(entry => {
+            const items = document.createElement("p");
+            items.textContent = `${entry.foodName}`;
+            document.getElementById("foods-added").appendChild(items);
+        })
+
+
+        const foodHeader = document.createElement('h1');
+        foodHeader.textContent = `Daily Food Intake`;
+        document.getElementById('foods-added').prepend(foodHeader);
+
+        const chartHeader = document.createElement('h1');
+        chartHeader.textContent = `Food Intake Chart`;
+        document.getElementById('chartHeader').prepend(chartHeader);
+
+
+
+
+
+
+
+
+
+
+
         // Create new chart
         window.macroChart = new window.Chart(ctx, {
             type: "pie",
+            plugins: [ChartDataLabels],
             data: {
                 labels: xValues,
                 datasets: [{
@@ -82,8 +108,16 @@ export async function macroPiChart() {
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
+                aspectRatio: 1,
                 plugins: {
+                    datalabels: {
+                        color: '#fff',
+                        formatter: (value, context) => {
+                            const label = context.chart.data.labels[context.dataIndex];
+                            return `${label}: ${value.toFixed(1)}g`;
+                        }
+                    },
                     legend: { 
                         display: true,
                         position: 'top'
