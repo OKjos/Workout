@@ -103,6 +103,15 @@ export async function handleFoodSearch() {
     searchFood(data.products);
 }
 
+function showAdded(message) {
+    const popupAdd = document.getElementById('popup-Add');
+    popupAdd.textContent = message;
+    popupAdd.style.opacity = '1';
+    setTimeout(() => {
+        popupAdd.style.opacity = '0';
+    }, 2000);
+}
+
 
 export async function searchFood(foodResults) {
     const section = document.getElementById('food-results');
@@ -167,6 +176,8 @@ export async function searchFood(foodResults) {
                 carbs: foodAdd.dataset.carbs,
                 fats: foodAdd.dataset.fats
             };
+
+            showAdded(`Added: ${foodItem.foodName}`);
 
 
             try {
