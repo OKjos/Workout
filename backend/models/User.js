@@ -27,6 +27,10 @@ const UserSchema = new mongoose.Schema({
         type: [String] 
     },
       sets: [{
+        setNumber: {
+            type: Number,
+            required: true
+        },
         weight: { 
             type: Number, 
             required: true 

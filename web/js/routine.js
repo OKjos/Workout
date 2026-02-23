@@ -66,8 +66,9 @@ export async function showWorkoutDetails(workout) {
                             <span>REPS</span>
                             <span>LBS</span>
                         </section>
+                    <section class="sets-container">
                         <section class="set-inputs">
-                        <span>1</span>
+                            <span class="rep-counter">1</span>
                             <input type="number" placeholder="Reps">
                             <input type="number" placeholder="Lbs">
                         </section>
@@ -77,6 +78,7 @@ export async function showWorkoutDetails(workout) {
                 </section>
             `).join("")}
             </section>
+            <button id="routine-save">Save</button>
         </section>
     `;
 
@@ -100,24 +102,38 @@ export async function showWorkoutDetails(workout) {
     });
 
 
-    section.addEventListener("click", (e) => {
-        if (e.target.classList.contains("add-set")) {
 
-            const exerciseCard = e.target.closest(".exercise-card");
-            const setSection = exerciseCard.querySelector(".set-section");
+    const setAddBtn = section.querySelectorAll('.add-set');
+
+
+    setAddBtn.forEach(setBtn => {
+        
+        const card = setBtn.closest('.exercise-card');
+        const container = card.querySelector('.sets-container');
+
+        let repCounter = 1;
+
+        
+        setBtn.addEventListener("click", () => {
+            repCounter++;
+
+
 
             const newSet = document.createElement("section");
             newSet.classList.add("set-inputs");
 
             newSet.innerHTML = `
-                <span>1</span>
+                <span>${repCounter}</span>
                     <input type="number" placeholder="Reps">
                     <input type="number" placeholder="Lbs">
             `;
 
-            setSection.appendChild(newSet);
-        }
-    });
+            container.appendChild(newSet);
+        });
+
+    })
+
+
 
 
     let seconds = 0;
