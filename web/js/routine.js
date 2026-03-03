@@ -49,9 +49,9 @@ export async function showWorkoutDetails(workout) {
                     <section class="exercise-card">
                     <section class="exercise-left">
                         <img src="${ex.gifUrl}">
-                        <p>${capitalize(ex.bodyParts[0])}</p>
-                        <p>${capitalize(ex.targetMuscles[0])}</p>
-                        <p>${capitalize(ex.secondaryMuscles[0])}</p>
+                        <p>Body Part<br><br> ${capitalize(ex.bodyParts[0])}</p>
+                        <p>Target Muscles<br><br> ${capitalize(ex.targetMuscles[0])}</p>
+                        <p>Secondary Muscles<br><br> ${capitalize(ex.secondaryMuscles[0])}</p>
                         <button 
                             class="remove-from-routine"
                             data-workout-id="${actualWorkout._id}"
@@ -78,7 +78,6 @@ export async function showWorkoutDetails(workout) {
                 </section>
             `).join("")}
             </section>
-            <button id="routine-save">Save</button>
         </section>
     `;
 
@@ -130,9 +129,7 @@ export async function showWorkoutDetails(workout) {
 
             container.appendChild(newSet);
         });
-
     })
-
 
 
 
@@ -169,3 +166,21 @@ export async function showWorkoutDetails(workout) {
         section.classList.add('hidden');
     };
 }
+
+
+
+    // try {
+    //     const response = await fetch(`/workouts/users/${userId}/workouts/${workoutId}/exercises/${exerciseId}`, {
+    //         method: 'PUT',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ sets: [{ setNumber, weight, reps }] })
+    //     });
+
+    //     if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+    //     showStatus('Saved successfully!', 'success');
+    //     } catch (error) {
+    //         console.error(error);
+    //         showStatus('Failed to save. Please try again.', 'error');
+    //     }
+    // }

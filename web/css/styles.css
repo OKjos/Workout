@@ -404,7 +404,7 @@ transition: all 0.3s ease;
 .remove-from-routine {
 border: 1px solid #ccc;
 border-radius: 5px;
-padding: 8px;
+padding: 2px;
 text-align: center;   
 font-size: 16px;
 font-weight: 600;
@@ -419,10 +419,11 @@ text-decoration-color: rgb(248, 248, 248)#444;
 
 .workout-dropdown {
 margin-top: 5%;
-width: 35%;
+width: 45%;
 padding: 2%;
 text-align: center;
 border-radius: 1.5rem;          
+justify-self: center;
 }
 
 
@@ -511,15 +512,12 @@ background-color: white;
 
 
 .exercise-grid {
-display: grid;
-grid-template-columns: repeat(5, 220px);gap: 20px;
 width: 100%;
-justify-content: center;     
 justify-items: center;
-align-items: center;
 }
 
-.exercise-card {
+
+.exercise-left {
 display: flex;              
 justify-content: space-between;
 gap: 20px;
@@ -530,19 +528,11 @@ width: 100%;
 box-sizing: border-box;
 }
 
-.exercise-left {
-display: flex;
-flex-direction: column;    
-gap: 8px;
-}
-
 
 .exercise-left p {
 text-align: center;
 font-size: 30px;
 }
-
-
 
 
 
@@ -576,6 +566,8 @@ text-align: center;
 display: flex;
 justify-content: space-between;
 gap: 5px;
+    padding: 2%;
+
 }
 
 .set-inputs span {
