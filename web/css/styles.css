@@ -7,7 +7,7 @@ box-sizing: border-box;
 
 
 body {
-    font-family: Arial, sans-serif;
+font-family: Arial, sans-serif;
 }
 
 
@@ -566,7 +566,7 @@ text-align: center;
 display: flex;
 justify-content: space-between;
 gap: 5px;
-    padding: 2%;
+padding: 2%;
 
 }
 
@@ -697,10 +697,10 @@ background-color: #fff;
 display: grid;
 grid-template-columns: 1fr 1fr;
 grid-template-areas: 
-    "chart foods"
-    "legend foods";
+"chart foods"
+"legend foods";
 padding: 20px;
-    align-items: start;
+align-items: start;
 }
 
 .macro-container h1 {
@@ -723,8 +723,8 @@ max-height: 800px;
 }
 
 #macro-chart {
-    text-align: center;
-    margin-top: 2%;
+text-align: center;
+margin-top: 2%;
 }
 
 #foods-added {
@@ -732,7 +732,7 @@ grid-area: foods;
 }
 
 #foods-added h1 {
-    margin-bottom: 2%
+margin-bottom: 2%
 }
 
 
@@ -771,8 +771,8 @@ text-align: center;
 display: grid;
 grid-template-columns: 1fr 1fr;
 grid-template-areas: 
-    "header header"
-    "graph  log";
+"header header"
+"graph  log";
 }
 
 .date-entry-log h1 {
@@ -788,15 +788,35 @@ justify-content: center;
 padding: 8px;
 }
 
-#bodyWeightChart {
+#bodyChart {
 grid-area: graph;
+width: 100%;
+min-height: 300px;
+display: flex;
+justify-content: center;
+align-items: center;
+margin-top: 2%
+}
+
+#bodyWeightChart {
+width: 100%;
+height: 100%;
 }
 
 #weight-log {
-grid-area: log;
-align-self: start;
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+text-align: center;
 }
 
+#weight-log h2 {
+text-decoration: underline;
+padding: 8px;
+}
+
+#weight-log h3 {
+padding: 8px;
+}
 
 
 

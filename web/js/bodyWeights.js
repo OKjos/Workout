@@ -18,10 +18,6 @@ bodySubmit.addEventListener('click', function (event) {
 
 export async function bodyWeightChart(input) {
     try {
-        if (chartInstance) {
-            chartInstance.destroy();
-        }
-
         const userId = await getUserId();
         if (input) {
             await apiPost(`/body/users/${userId}/bodyWeight`, { dailyWeight: input });
@@ -47,12 +43,24 @@ export async function bodyWeightChart(input) {
 
 
 
-        document.getElementById("weight-log").innerHTML = '';
+        document.getElementById("daily-weight").innerHTML = '';
+        document.getElementById("monthly-weight").innerHTML = '';
+        document.getElementById("yearly-weight").innerHTML = '';
 
 
-        const bodyHeader = document.createElement("h1");
-        bodyHeader.textContent = `Daily Measurements`;
-        document.getElementById('weight-log').appendChild(bodyHeader);
+
+        const dailyHeader = document.createElement("h2");
+        dailyHeader.textContent = `Daily Measurements`;
+        document.getElementById('daily-weight').appendChild(dailyHeader);
+
+        const monthlyHeader = document.createElement("h2");
+        monthlyHeader.textContent = `Monthly Avg`;
+        document.getElementById('monthly-weight').appendChild(monthlyHeader);
+
+        const yearlyHeader = document.createElement ("h2");
+        yearlyHeader.textContent = `Yearly Avg`;
+        document.getElementById('yearly-weight').appendChild(yearlyHeader);
+
 
         const { monthlyAverage, yearlyAverage } = groupAvgCalc(data);
 
@@ -60,21 +68,21 @@ export async function bodyWeightChart(input) {
 
         function displayWeights(dailyWeight) {
             currentMonthData.forEach(entry => {
-                const items = document.createElement("p");
+                const items = document.createElement("h3");
                 const date = new Date(entry.createdAt).toLocaleDateString();
                 items.textContent = `${date} - ${entry.dailyWeight} lbs`;
-                document.getElementById("weight-log").appendChild(items);
+                document.getElementById("daily-weight").appendChild(items);
             });
 
             for (const month in monthlyAverage) {
-                const t = document.createElement('h1');
+                const t = document.createElement('h3');
                 t.textContent = `${month} - Avg: ${monthlyAverage[month].toFixed(1)} lbs`;
-                document.getElementById("weight-log").appendChild(t);
+                document.getElementById("monthly-weight").appendChild(t);
             }
 
-            const yearAvg = document.createElement("h1");
-            yearAvg.textContent = `Yearly Avg: ${yearlyAverage.toFixed(1)} lbs`;
-            document.getElementById("weight-log").appendChild(yearAvg);
+            const yearAvg = document.createElement("h3");
+            yearAvg.textContent = `Avg: ${yearlyAverage.toFixed(1)} lbs`;
+            document.getElementById("yearly-weight").appendChild(yearAvg);
 
         }
 
@@ -113,7 +121,16 @@ export async function bodyWeightChart(input) {
 
 
 
-
+        if (chartInstance) {
+            chartInstance.data.datasets[0].data = currentMonthData.map(entry => ({
+                y: entry.dailyWeight,
+                x: new Date(entry.createdAt).getDate()
+            }));
+            chartInstance.options.scales.y.min = minWeight;
+            chartInstance.options.scales.y.max = maxWeight;
+            chartInstance.update();
+            return;
+        }
 
 
         chartInstance = new Chart("bodyWeightChart", {
@@ -132,6 +149,9 @@ export async function bodyWeightChart(input) {
             }]
         },
         options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 2,
     plugins: {
         legend: { display: true },
             tooltip: {
