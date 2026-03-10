@@ -95,7 +95,58 @@ router.post('/', async (req, res) => {
 });
 
 
+//Gets the whole array of Sets (setNumber, weight, reps)
+router.get('/users/:userId/workouts/:workoutId/exercises/:exerciseId/sets', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
+    res.json(user.sets);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+})
+
+
+//Checks for user then sends the setNumber, weight, reps to be stored
+router.post('/users/:userId/workouts/:workoutId/exercises/:exerciseId/sets', async (req, res) => {
+  try {
+    const { userId, workoutId, exerciseId } = req.params;
+
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const workout = user.workouts.id(workoutId);
+    if (!workout) {
+      return res.status(404).json({ message: "Workout not found" });
+    }
+
+    const exercise = workout.exercises.find(ex => ex.exerciseId === exerciseId)
+    if (!exercise) {
+      return res.status(404).json({ message: "Exercise not found" });
+    }
+
+
+    const { setNumber, weight, reps, time } = req.body;
+
+    if (!setNumber || !weight || !reps) {
+      return res.status(400).json({ message: "Weight and Reps are required" });
+    }
+
+    exercise.sets.push({ setNumber, weight, reps, time });
+    await user.save();
+
+    res.json(exercise.sets);
+
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+})
 
 
 

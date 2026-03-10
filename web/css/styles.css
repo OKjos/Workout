@@ -344,6 +344,17 @@ background: #1a73e8;
 
 
 
+
+.save-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%)  
+}
+
+
+
+
 /* API output display styles*/
 .weight-results {
 display: grid;

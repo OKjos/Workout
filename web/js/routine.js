@@ -27,7 +27,6 @@ export async function createRoutine() {
 // Show details of a specific workout
 export async function showWorkoutDetails(workout) {
     
-    
     const userId = await getUserId();
     const res = await fetch(`/workouts/users/${userId}/workouts/${workout}`);
     const workoutData = await res.json();
@@ -69,8 +68,9 @@ export async function showWorkoutDetails(workout) {
                     <section class="sets-container">
                         <section class="set-inputs">
                             <span class="rep-counter">1</span>
-                            <input type="number" placeholder="Reps">
-                            <input type="number" placeholder="Lbs">
+                            <input type="number" placeholder="Reps" id="repNumber">
+                            <input type="number" placeholder="Lbs" id="weightNumber">
+                            <button>Remove</button>
                         </section>
                     </section>
                     <button class="add-set">Add set</button>
@@ -78,16 +78,23 @@ export async function showWorkoutDetails(workout) {
                 </section>
             `).join("")}
             </section>
-        </section>
+        </section>       weightInput  repInput
     `;
 
     const removeBtn = section.querySelectorAll('.remove-from-routine');
+    const repInput = document.getElementById('repNumber');
+    const weightInput = document.getElementById('weightNumber');
+    let repCounter = 1;
+    let workoutId;
+    let exerciseId;
+    workoutId = section.querySelector('.remove-from-routine').dataset.workoutId;
+    exerciseId = section.querySelector('.remove-from-routine').dataset.exerciseId;
 
     removeBtn.forEach(btn => {
         btn.addEventListener("click", async () => {
             
-            const workoutId = btn.dataset.workoutId;
-            const exerciseId = btn.dataset.exerciseId;
+             workoutId = btn.dataset.workoutId;
+             exerciseId = btn.dataset.exerciseId;
 
             const userId = await getUserId();
 
@@ -110,7 +117,6 @@ export async function showWorkoutDetails(workout) {
         const card = setBtn.closest('.exercise-card');
         const container = card.querySelector('.sets-container');
 
-        let repCounter = 1;
 
         
         setBtn.addEventListener("click", () => {
@@ -123,8 +129,9 @@ export async function showWorkoutDetails(workout) {
 
             newSet.innerHTML = `
                 <span>${repCounter}</span>
-                    <input type="number" placeholder="Reps">
-                    <input type="number" placeholder="Lbs">
+                    <input type="number" placeholder="Reps" id="repNumber">
+                    <input type="number" placeholder="Lbs" id="weightNumber">
+                    <button>Remove</button>
             `;
 
             container.appendChild(newSet);
@@ -158,29 +165,52 @@ export async function showWorkoutDetails(workout) {
             interval = null;
 
             toggleBtn.textContent = "Start";
+
+            const popupEnd = document.createElement('section');
+            popupEnd.classList.add('save-popup');
+            popupEnd.innerHTML = `
+            <p>Finish workout?</p>
+            <button id="confirmSave">Yes</button>
+            <button id="cancelSave">No</button>
+            `;
+
+            document.body.appendChild(popupEnd);
+
+            document.getElementById('confirmSave').addEventListener('click', async () => {
+                await routineSetsInputs();
+                popupEnd.remove();
+            });
+
+            document.getElementById('cancelSave').addEventListener('click', async () => {
+                popupEnd.remove();
+            })
         }
     })
-
 
     document.getElementById("closeRoutine").onclick = () => {
         section.classList.add('hidden');
     };
+
+
+
+
+
+    async function routineSetsInputs() {
+        try {
+            const userId = await getUserId();
+            const res = await apiPost(`/workouts/users/${userId}/workouts/${workoutId}/exercises/${exerciseId}/sets`, {
+                weight: weightInput.value,
+                reps: repInput.value,
+                setNumber: repCounter,
+                time: seconds
+            })
+        } catch (error) {
+            console.error("Error in saving workout", error);
+        }
+    }
+
 }
 
 
 
-    // try {
-    //     const response = await fetch(`/workouts/users/${userId}/workouts/${workoutId}/exercises/${exerciseId}`, {
-    //         method: 'PUT',
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: JSON.stringify({ sets: [{ setNumber, weight, reps }] })
-    //     });
 
-    //     if (!response.ok) throw new Error(`Server error: ${response.status}`);
-
-    //     showStatus('Saved successfully!', 'success');
-    //     } catch (error) {
-    //         console.error(error);
-    //         showStatus('Failed to save. Please try again.', 'error');
-    //     }
-    // }

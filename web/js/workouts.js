@@ -4,6 +4,8 @@ import { apiPost } from './api.js';
 import { getUserId } from './helper.js';
 import { showWorkoutDetails } from './routine.js';
 
+
+
 // Load all user workouts
 export async function loadWorkouts() {
     const userId = await getUserId();
@@ -46,3 +48,5 @@ export async function addExerciseToWorkout(btn, workoutId) {
     if (res.success) alert("Exercise added!");
     else alert("Error adding exercise.");
 }
+
+

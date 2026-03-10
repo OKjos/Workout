@@ -38,6 +38,10 @@ const UserSchema = new mongoose.Schema({
         reps: { 
             type: Number, 
             required: true 
+        },
+        time: {
+            type: Number,
+            required: true
         }
       }]
     } 
