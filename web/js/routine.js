@@ -68,8 +68,8 @@ export async function showWorkoutDetails(workout) {
                     <section class="sets-container">
                         <section class="set-inputs">
                             <span class="rep-counter">1</span>
-                            <input type="number" placeholder="Reps" id="repNumber">
-                            <input type="number" placeholder="Lbs" id="weightNumber">
+                            <input type="number" placeholder="Reps" class="rep-input">
+                            <input type="number" placeholder="Lbs" class="weight-input">
                             <button>Remove</button>
                         </section>
                     </section>
@@ -78,17 +78,12 @@ export async function showWorkoutDetails(workout) {
                 </section>
             `).join("")}
             </section>
-        </section>       weightInput  repInput
+        </section>
     `;
 
     const removeBtn = section.querySelectorAll('.remove-from-routine');
-    const repInput = document.getElementById('repNumber');
-    const weightInput = document.getElementById('weightNumber');
-    let repCounter = 1;
-    let workoutId;
-    let exerciseId;
-    workoutId = section.querySelector('.remove-from-routine').dataset.workoutId;
-    exerciseId = section.querySelector('.remove-from-routine').dataset.exerciseId;
+
+
 
     removeBtn.forEach(btn => {
         btn.addEventListener("click", async () => {
@@ -116,21 +111,24 @@ export async function showWorkoutDetails(workout) {
         
         const card = setBtn.closest('.exercise-card');
         const container = card.querySelector('.sets-container');
+        let counter = 1;
 
 
         
         setBtn.addEventListener("click", () => {
-            repCounter++;
+            counter++;
+
 
 
 
             const newSet = document.createElement("section");
             newSet.classList.add("set-inputs");
 
+
             newSet.innerHTML = `
-                <span>${repCounter}</span>
-                    <input type="number" placeholder="Reps" id="repNumber">
-                    <input type="number" placeholder="Lbs" id="weightNumber">
+                <span>${counter}</span>
+                    <input type="number" placeholder="Reps" class="rep-input">
+                    <input type="number" placeholder="Lbs" class="weight-input">
                     <button>Remove</button>
             `;
 
@@ -198,12 +196,29 @@ export async function showWorkoutDetails(workout) {
     async function routineSetsInputs() {
         try {
             const userId = await getUserId();
-            const res = await apiPost(`/workouts/users/${userId}/workouts/${workoutId}/exercises/${exerciseId}/sets`, {
-                weight: weightInput.value,
-                reps: repInput.value,
-                setNumber: repCounter,
-                time: seconds
-            })
+            const cards = section.querySelectorAll('.exercise-card');
+
+                for (const card of cards) {
+                    const workoutId = card.querySelector('.remove-from-routine').dataset.workoutId;
+                    const exerciseId = card.querySelector('.remove-from-routine').dataset.exerciseId;
+                    const sets = card.querySelectorAll('.set-inputs');   
+                    let index = 0;
+
+                    for (const row of sets) {
+                        
+                        const reps = row.querySelector('.rep-input').value;
+                        const weight = row.querySelector('.weight-input').value;
+                        const res = await apiPost(`/workouts/users/${userId}/workouts/${workoutId}/exercises/${exerciseId}/sets`, {
+                        weight: weight,
+                        reps: reps,
+                        setNumber: index + 1,
+                        time: seconds,
+                    });
+                    index++
+                }
+            }
+
+
         } catch (error) {
             console.error("Error in saving workout", error);
         }
