@@ -65,15 +65,16 @@ export async function showWorkoutDetails(workout) {
                             <span>REPS</span>
                             <span>LBS</span>
                         </section>
-                    <section class="sets-container">
-                        <section class="set-inputs">
-                            <span class="rep-counter">1</span>
-                            <input type="number" placeholder="Reps" class="rep-input">
-                            <input type="number" placeholder="Lbs" class="weight-input">
-                            <button>Remove</button>
+                        <section class="sets-container">
+                            <section class="set-inputs">
+                                <span class="rep-counter">1</span>
+                                <input type="number" placeholder="Reps" class="rep-input">
+                                <input type="number" placeholder="Lbs" class="weight-input">
+                                <button>Remove</button>
+                            </section>
                         </section>
+                        <button class="add-set">Add set</button>
                     </section>
-                    <button class="add-set">Add set</button>
                     </section>
                 </section>
             `).join("")}
@@ -88,8 +89,8 @@ export async function showWorkoutDetails(workout) {
     removeBtn.forEach(btn => {
         btn.addEventListener("click", async () => {
             
-             workoutId = btn.dataset.workoutId;
-             exerciseId = btn.dataset.exerciseId;
+             let workoutId = btn.dataset.workoutId;
+             let exerciseId = btn.dataset.exerciseId;
 
             const userId = await getUserId();
 

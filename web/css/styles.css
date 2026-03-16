@@ -829,6 +829,13 @@ padding: 8px;
 padding: 8px;
 }
 
+#weight-log button {
+  background: none;
+  margin: 2%;
+  cursor: pointer;
+  border: none;
+  font-size: 20px;
+}
 
 
 

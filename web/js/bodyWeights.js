@@ -67,11 +67,16 @@ export async function bodyWeightChart(input) {
         displayWeights(currentMonthData, monthlyAverage, yearlyAverage);
 
         function displayWeights(dailyWeight) {
+
+
             currentMonthData.forEach(entry => {
                 const items = document.createElement("h3");
                 const date = new Date(entry.createdAt).toLocaleDateString();
                 items.textContent = `${date} - ${entry.dailyWeight} lbs`;
                 document.getElementById("daily-weight").appendChild(items);
+                 const btn = document.createElement('button');
+                btn.textContent = '⋮';
+                items.appendChild(btn);
             });
 
             for (const month in monthlyAverage) {

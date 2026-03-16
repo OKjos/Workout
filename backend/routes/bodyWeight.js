@@ -47,4 +47,38 @@ router.post('/users/:userId/bodyWeight', async (req, res) => {
     }
 })
 
+
+
+router.delete('/users/:userId/bodyWeight/:bodyWeight', async (req, res) => {
+    try {
+        const {userId, bodyWeight } = req.params;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ sucess: false, message: "User not found" });
+        }
+
+        const bodyW = user.bodyWeight.id(bodyWeight);
+        if (!bodyW) {
+            return res.status(404).json({ success: false, message: "Body Weight not found" });
+        }
+
+        user.bodyWeight = user.bodyWeight.filter(
+            ex => ex._id.toString() !== bodyWeightId
+        );
+
+        await user.save();
+
+        res.json({
+            success: true,
+            message: "Weight removed"
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+
+    
+})
+
 module.exports = router;

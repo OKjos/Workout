@@ -326,10 +326,11 @@ router.delete('/users/:userId/workouts/:workoutId/exercises/:exerciseId', async 
       return res.status(404).json({ success: false, message: "Workout not found" });
     }
 
+    //go into workout then into exercises and then look for the right ID
     // Filter out the exercise with matching exerciseId
     // .filter() creates a new array excluding the exercise to delete
     workout.exercises = workout.exercises.filter(
-      ex => ex.exerciseId !== exerciseId
+      ex => ex.exerciseId.toString() !== exerciseId
     );
 
     await user.save();
