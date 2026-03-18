@@ -861,3 +861,60 @@ transition: opacity 0.3s ease;
 pointer-events: none;
 z-index: 1000;
 }
+
+
+/* workout history */
+.workout-wrapper {
+max-width: 60%;
+margin: 0 auto;
+}
+
+.workout-container {
+display: flex;
+justify-content: space-between;
+align-items: center;
+
+}
+
+.workout-grid-con {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+gap: 0.25rem;
+}
+
+.day-label {
+text-align: center;
+color: gray;
+}
+
+.day-cell {
+width: 60px;
+aspect-ratio: 1;
+display: grid;
+place-items: center;
+cursor: pointer;
+background: none;
+border: none;
+border-radius: 2px;
+}
+
+.day-cell:hover {
+background-color: purple;
+}
+
+
+.empty {
+width: 60px;
+aspect-ratio: 1;
+display: grid;
+background: none;
+border: none;
+cursor: default;
+}
+
+.workout-description {
+border: 12px solid blue;
+border-radius: 2px;
+padding: 1rem;
+min-height: 5rem;
+}

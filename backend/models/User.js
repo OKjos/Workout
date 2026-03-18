@@ -102,7 +102,51 @@ const UserSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now 
-    }
+    },
+    workoutHistory: [
+        {
+        workoutName: {
+            type: String,
+            required: true
+        },
+        exercises: [
+            {
+                exerciseId: {
+                    type: String,
+                    required: true
+                },
+                gifUrl: {
+                    type: String,
+                    required: true
+                },
+                sets: [
+                    {
+                    setNumber: {
+                        type: Number,
+                        required: true
+                    },
+                    weight: {
+                       type: Number,
+                       required: true 
+                    },
+                    reps: {
+                        type: Number,
+                        required: true
+                    },
+                    time: {
+                        type: Number,
+                        required: true
+                    }
+                    }
+                ]
+            }
+        ],
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
+        }
+    ]
 });
 
 const User = mongoose.model("User", UserSchema, "Users");

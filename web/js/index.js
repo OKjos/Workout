@@ -1,7 +1,7 @@
 import { exerciseSearch, handleFoodSearch } from "./search.js";
 import { loadWorkouts } from "./workouts.js";
 import { macroPiChart } from "./foodDis.js";
-import { openRoutineForm, closeRoutineForm, createRoutine, showWorkoutDetails } from "./routine.js";
+import { openRoutineForm, closeRoutineForm, createRoutine, showWorkoutDetails, workoutHistory } from "./routine.js";
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -119,4 +119,5 @@ document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------
     loadWorkouts();
     profileButtons();
+    workoutHistory();
 });

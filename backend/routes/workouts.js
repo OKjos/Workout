@@ -301,7 +301,35 @@ router.post("/users/:userId/workouts/:workoutId/add-exercise", async (req, res) 
 })
 
 
+router.get("/users/:userId/workoutHistory", async (req, res) => {
+  try {
 
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    if(!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const workoutHistory = user.workoutHistory;
+    const foods = user.foods;
+    const bodyWeight = user.bodyWeight;
+
+
+    res.json({
+      success: true,
+      workoutHistory,
+      foods,
+      bodyWeight
+    });
+
+
+  } catch (error) {
+
+    console.error("Error fetching: ", error);
+    res.status(500).json({ error: error.message });
+  }
+})
 
 
 
@@ -347,6 +375,7 @@ router.delete('/users/:userId/workouts/:workoutId/exercises/:exerciseId', async 
         res.status(500).json({ success: false, message: "Server error" });
   }
 })
+
 
 
 

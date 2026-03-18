@@ -230,3 +230,112 @@ export async function showWorkoutDetails(workout) {
 
 
 
+export async function workoutHistory() {
+    try {
+
+        const prevMonthBtn = document.querySelector(".prev-month");
+        const nextMonth = document.querySelector(".next-month");
+        const monthYear = document.querySelector(".month-year");
+        const gridCon = document.querySelector(".workout-grid-con");
+        const workoutDes = document.querySelector(".workout-description");
+
+        
+        const userId = await getUserId();
+        const res = await fetch(`/workouts/users/${userId}/workoutHistory`);
+        const historyData = await res.json();
+
+         if (!res.ok) {
+            throw new Error("Failed to fetch history");
+         }
+
+         const { workoutHistory, foods, bodyWeight } = historyData;
+
+         const date = new Date();
+         const month =  date.getMonth();
+         const year = date.getFullYear();
+
+         const workoutDate = {};
+         const foodByDate = {};
+         const weightByDate = {};
+
+
+         workoutHistory.forEach(workout => {
+            const workoutDay = new Date(workout.createdAt);
+            const key = `${workoutDay.getFullYear()}-${workoutDay.getMonth()}-${workoutDay.getDate()}`;
+            workoutDate[key] = workout;
+         });
+
+         foods.forEach(food => {
+            const foodDay = new Date(food.createdAt);
+            const key = `${foodDay.getFullYear()}-${foodDay.getMonth()}-${foodDay.getDate()}`;
+            foodByDate[key] = food;
+         });
+
+         bodyWeight.forEach(bodyW => {
+            const bodyWeightDay = new Date(bodyW.createdAt);
+            const key = `${bodyWeightDay.getFullYear()}-${bodyWeightDay.getMonth()}-${bodyWeightDay.getDate()}`;
+            weightByDate[key] = bodyW;
+         });
+
+
+
+         renderCalendar(month, year, workoutDate, foodByDate, weightByDate, gridCon, monthYear, workoutDes);
+
+
+
+    } catch (error) {
+
+        console.log(error);
+    }
+}
+
+
+function renderCalendar(month, year, workoutDate, foodByDate, weightByDate, gridCon, monthYear, workoutDes) {
+    //Tell which day to get
+    const date = new Date(year, month, 1);
+    monthYear.textContent = date.toLocaleString("default", { month: "long", year: "numeric" });
+
+    //get the first day of the month
+    const firstDay = new Date(year, month, 1).getDay();
+    //get the last day of the month
+    const lastOfMonth = new Date(year, month + 1, 0).getDate();
+
+    gridCon.innerHTML = "";
+    let html = `
+        <span class='day-label'>Sun</span>
+        <span class='day-label'>Mon</span>
+        <span class='day-label'>Tue</span>
+        <span class='day-label'>Wed</span>
+        <span class='day-label'>Thu</span>
+        <span class='day-label'>Fri</span>
+        <span class='day-label'>Sat</span>
+        `
+
+        //Loop through blank cells before the 1st of the month
+        for (let i = 0; i < firstDay; i++) {
+            html += `<button class="empty"></button>`
+        };
+
+        //Loop through each day of the month and create a button for each one
+        //data-date stores the full date string so it knows which day is clicked
+        //i = current day displayed in the cell
+        for (let i = 1; i <= lastOfMonth; i++) {
+            html += `<button class="day-cell" data-date="${year}-${month}-${i}">${i}</button>`
+        };
+
+        gridCon.innerHTML = html;
+
+        document.querySelectorAll('.day-cell').forEach(cell => {
+            cell.addEventListener('click', async () => {
+                let info = cell.dataset.date;
+
+                console.log(info);
+                console.log(workoutDate[info]);
+                console.log(foodByDate[info]);
+                console.log(weightByDate[info]);
+        })  
+        })
+}
+
+//Workout description innerHTML
+//renderCalendar to check for an entry on that day
