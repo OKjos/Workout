@@ -346,10 +346,10 @@ background: #1a73e8;
 
 
 .save-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%)  
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%)  
 }
 
 
@@ -830,11 +830,11 @@ padding: 8px;
 }
 
 #weight-log button {
-  background: none;
-  margin: 2%;
-  cursor: pointer;
-  border: none;
-  font-size: 20px;
+background: none;
+margin: 2%;
+cursor: pointer;
+border: none;
+font-size: 20px;
 }
 
 
@@ -867,13 +867,20 @@ z-index: 1000;
 .workout-wrapper {
 max-width: 60%;
 margin: 0 auto;
+padding: 2rem;
 }
 
-.workout-container {
+.workout-conatiner {
 display: flex;
 justify-content: space-between;
 align-items: center;
+padding-bottom: 2rem
+}
 
+.workout-conatiner button {
+background-color: none;
+font-size: 40px;
+border: none;
 }
 
 .workout-grid-con {
@@ -888,7 +895,7 @@ color: gray;
 }
 
 .day-cell {
-width: 60px;
+width: 100%;
 aspect-ratio: 1;
 display: grid;
 place-items: center;
@@ -904,7 +911,7 @@ background-color: purple;
 
 
 .empty {
-width: 60px;
+width: 100%;
 aspect-ratio: 1;
 display: grid;
 background: none;
@@ -917,4 +924,39 @@ border: 12px solid blue;
 border-radius: 2px;
 padding: 1rem;
 min-height: 5rem;
+}
+
+.has-entry {
+background-color: pink;
+}
+
+.dot {
+width: 0.4rem;
+height: 0.4rem;
+border-radius: 50%;
+display: block;
+background-color: rgb(247, 6, 6);
+}
+
+
+.workout-description {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 0.25rem;
+}
+
+.des-grid {
+  align-items: center;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.des-grid h1 {
+  padding-bottom: .5rem;
+  text-decoration: underline;
+}
+
+.des-workout-grid {
+
 }

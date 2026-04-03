@@ -197,6 +197,8 @@ export async function showWorkoutDetails(workout) {
     async function routineSetsInputs() {
         try {
             const userId = await getUserId();
+            const historyExercises = [];
+
             const cards = section.querySelectorAll('.exercise-card');
 
                 for (const card of cards) {
@@ -204,6 +206,13 @@ export async function showWorkoutDetails(workout) {
                     const exerciseId = card.querySelector('.remove-from-routine').dataset.exerciseId;
                     const sets = card.querySelectorAll('.set-inputs');   
                     let index = 0;
+
+                    const cardSets = [];
+
+
+
+                    //GETS THE WHOLE EXERCCISE ARRAY
+                    const matchedExercise = actualWorkout.exercises.find(ex => ex.exerciseId === exerciseId);
 
                     for (const row of sets) {
                         
@@ -216,8 +225,20 @@ export async function showWorkoutDetails(workout) {
                         time: seconds,
                     });
                     index++
+                    cardSets.push({weight, reps, setNumber: index + 1, time: seconds});
                 }
+                console.log(cardSets)
+                historyExercises.push({sets: cardSets, exerciseId, gifUrl: matchedExercise.gifUrl});
             }
+            
+
+
+            console.log(historyExercises) 
+            const wHistory = await fetch(`/workouts/users/${userId}/workoutHistory`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ workoutName: actualWorkout.workoutName, exercises: historyExercises })
+            });
 
 
         } catch (error) {
@@ -251,8 +272,8 @@ export async function workoutHistory() {
          const { workoutHistory, foods, bodyWeight } = historyData;
 
          const date = new Date();
-         const month =  date.getMonth();
-         const year = date.getFullYear();
+         let month =  date.getMonth();
+         let year = date.getFullYear();
 
          const workoutDate = {};
          const foodByDate = {};
@@ -268,7 +289,11 @@ export async function workoutHistory() {
          foods.forEach(food => {
             const foodDay = new Date(food.createdAt);
             const key = `${foodDay.getFullYear()}-${foodDay.getMonth()}-${foodDay.getDate()}`;
-            foodByDate[key] = food;
+            if (!foodByDate[key]) {
+                foodByDate[key] = [food];
+            } else if (foodByDate[key]) {
+                foodByDate[key].push(food);
+            }
          });
 
          bodyWeight.forEach(bodyW => {
@@ -277,6 +302,25 @@ export async function workoutHistory() {
             weightByDate[key] = bodyW;
          });
 
+         prevMonthBtn.addEventListener('click', () => {
+            month--;
+            if (month < 0) {
+                year--;
+                month = 11;
+            }
+            renderCalendar(month, year, workoutDate, foodByDate, weightByDate, gridCon, monthYear, workoutDes);
+         });
+        
+         nextMonth.addEventListener('click', () => {
+            month++;
+            if (month > 11) {
+                year++;
+                month = 0;
+            }
+            renderCalendar(month, year, workoutDate, foodByDate, weightByDate, gridCon, monthYear, workoutDes);
+         });
+
+         console.log(weightByDate)
 
 
          renderCalendar(month, year, workoutDate, foodByDate, weightByDate, gridCon, monthYear, workoutDes);
@@ -320,7 +364,16 @@ function renderCalendar(month, year, workoutDate, foodByDate, weightByDate, grid
         //data-date stores the full date string so it knows which day is clicked
         //i = current day displayed in the cell
         for (let i = 1; i <= lastOfMonth; i++) {
-            html += `<button class="day-cell" data-date="${year}-${month}-${i}">${i}</button>`
+            //key acts like an ID to look through and then the if statment uses key to browse through and see if 
+            //any of the entrys happened on that day
+            const key = `${year}-${month}-${i}`;
+            //checks if there was a user entry on the day and if theres an entry put a dot and change the box color
+            //else keep it a regular button
+            if (workoutDate[key] || weightByDate[key] || foodByDate[key]) {
+                html += `<button class="day-cell has-entry" data-date="${year}-${month}-${i}">${i}<span class="dot"></span></button>`
+            } else {
+                html += `<button class="day-cell" data-date="${year}-${month}-${i}">${i}</button>`
+            }
         };
 
         gridCon.innerHTML = html;
@@ -333,9 +386,57 @@ function renderCalendar(month, year, workoutDate, foodByDate, weightByDate, grid
                 console.log(workoutDate[info]);
                 console.log(foodByDate[info]);
                 console.log(weightByDate[info]);
+
+        workoutDes.innerHTML = "";
+        let descHtml = '';
+
+        if (workoutDate[info]) {
+            descHtml += `
+                <section class="des-grid">
+                    <section class="des-workout-info">
+                        <h1>Workout:</h1>
+                        <h2>${workoutDate[info].workoutName}</h2>
+
+                    </section>
+                </section>
+            `
+        };
+        
+        //^^^^
+        /*
+                        <section class="des-workout-grid">
+                            ${workoutDate[info].exercises.map(ex => `<img src="${ex.gifUrl}">`).join("")}
+                            ${workoutDate[info].exercises.map(ex => ex.sets.map(set => `<p>${set.reps}</p>`).join("")).join("")}                        
+                        </section>
+        */
+
+        if (foodByDate[info]) {
+            descHtml += `
+                <section class="des-grid">
+                    <h1>Food Intake:</h1>
+                    ${foodByDate[info].map(ex => `<h3>${ex.foodName}</h3>`).join("")}
+                </section>
+            `
+        };
+
+        if (weightByDate[info]) {
+            descHtml += `
+                <section class="des-grid">
+                    <h1>Daily Weight:</h1>
+                    <h3>Weight: ${weightByDate[info].dailyWeight}lbs</h3>
+                </section>            
+            `
+        };
+
+        workoutDes.innerHTML += descHtml;
         })  
-        })
+        });
+
+
+
 }
 
 //Workout description innerHTML
 //renderCalendar to check for an entry on that day
+//Current month/year not showing between prev and next month button
+//Prev and next month button needs styling

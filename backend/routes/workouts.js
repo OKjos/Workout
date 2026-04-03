@@ -301,6 +301,11 @@ router.post("/users/:userId/workouts/:workoutId/add-exercise", async (req, res) 
 })
 
 
+
+
+
+
+
 router.get("/users/:userId/workoutHistory", async (req, res) => {
   try {
 
@@ -331,6 +336,32 @@ router.get("/users/:userId/workoutHistory", async (req, res) => {
   }
 })
 
+
+router.post("/users/:userId/workoutHistory", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+      if(!user) {
+        return res.status(404).json({ error: "User not found" });
+      };
+
+      const { workoutName, exercises } = req.body;
+
+      user.workoutHistory.push({ workoutName, exercises });
+
+      await user.save();
+
+      res.json({ 
+        success: true,
+        message: "Exercise removed",
+      });
+
+  } catch (error) {
+    console.error("Error fetching: ", error);
+    res.status(500).json({ error: error.message });
+  }
+})
 
 
 
