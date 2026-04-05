@@ -25,7 +25,6 @@ export async function bodyWeightChart(input) {
         const res = await fetch(`/body/users/${userId}/bodyWeight`);
         const data = await res.json();
 
-        console.log("data from DB:", data);
         const now = new Date();
         const currentMonthData = data.filter(entry => {
             const date = new Date(entry.createdAt);

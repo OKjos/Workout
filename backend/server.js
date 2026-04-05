@@ -107,9 +107,13 @@ app.get("/api/food", async (req, res) => {
         const query = req.query.q;
 
 
-        const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=6&lc=en&cc=us&fields=product_name,image_url,serving_size,energy-kcal_100g,energy-kcal_serving,proteins_100g,proteins_serving,carbohydrates_100g,carbohydrates_serving,fat_100g,fat_serving`;
+        const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=4&lc=en&cc=us&fields=product_name,image_url,serving_size,energy-kcal_100g,energy-kcal_serving,proteins_100g,proteins_serving,carbohydrates_100g,carbohydrates_serving,fat_100g,fat_serving`;
+
 
         const response = await fetch(url);
+        console.log(response.status)
+
+        console.log(response.ok)
         const data = await response.json();
 
         res.json(data);

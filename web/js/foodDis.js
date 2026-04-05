@@ -20,7 +20,6 @@ export async function addFoodToDay(food) {
             fats: food.fats
         });
 
-        console.log("Food added successfully: ", data);
         return data;
     } catch (error) {
         console.error("Error adding", error);
@@ -38,7 +37,6 @@ export async function macroPiChart() {
 
 
         const foods = data.foods || [];
-        console.log('Fetched foods:', foods);
 
 
         let totalProtein = 0;
@@ -53,7 +51,6 @@ export async function macroPiChart() {
             totalCalories += food.macros?.calories || 0;
         });
 
-        console.log('Totals:', { totalProtein, totalCarbs, totalFats, totalCalories });  // Debug log
 
         const xValues = ["Protein", "Carbs", "Fats"];  
         const yValues = [totalProtein, totalCarbs, totalFats];  
@@ -70,9 +67,10 @@ export async function macroPiChart() {
         }
 
         foods.forEach(entry => {
-            const items = document.createElement("p");
-            items.textContent = `${entry.foodName}`;
-            document.getElementById("foods-added").appendChild(items);
+            const items = document.getElementById("foods-added");
+            items.innerHTML += `
+                <p>${entry.foodName} <button data-food-id="${entry._id}" class="del-btn">Del</button> </p>
+            `;
         })
 
 
@@ -86,6 +84,21 @@ export async function macroPiChart() {
 
 
 
+
+        const removeFoodBtn = document.querySelectorAll('.del-btn');
+
+        removeFoodBtn.forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const userId = await getUserId();
+
+                let foodsId = btn.dataset.foodId;
+
+                await fetch(`/food/users/${userId}/foods/${foodsId}`, {
+                    method: "DELETE"
+                });
+                console.log("CLICKED");
+            })
+        })
 
 
 

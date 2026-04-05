@@ -227,13 +227,11 @@ export async function showWorkoutDetails(workout) {
                     index++
                     cardSets.push({weight, reps, setNumber: index + 1, time: seconds});
                 }
-                console.log(cardSets)
                 historyExercises.push({sets: cardSets, exerciseId, gifUrl: matchedExercise.gifUrl});
             }
             
 
 
-            console.log(historyExercises) 
             const wHistory = await fetch(`/workouts/users/${userId}/workoutHistory`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -320,7 +318,6 @@ export async function workoutHistory() {
             renderCalendar(month, year, workoutDate, foodByDate, weightByDate, gridCon, monthYear, workoutDes);
          });
 
-         console.log(weightByDate)
 
 
          renderCalendar(month, year, workoutDate, foodByDate, weightByDate, gridCon, monthYear, workoutDes);
@@ -382,10 +379,6 @@ function renderCalendar(month, year, workoutDate, foodByDate, weightByDate, grid
             cell.addEventListener('click', async () => {
                 let info = cell.dataset.date;
 
-                console.log(info);
-                console.log(workoutDate[info]);
-                console.log(foodByDate[info]);
-                console.log(weightByDate[info]);
 
         workoutDes.innerHTML = "";
         let descHtml = '';
