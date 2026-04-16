@@ -1,3 +1,6 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
 * {
 padding: 0;
 margin: 0;
@@ -955,8 +958,4 @@ gap: 0.25rem;
 .des-grid h1 {
   padding-bottom: .5rem;
   text-decoration: underline;
-}
-
-.des-workout-grid {
-
 }

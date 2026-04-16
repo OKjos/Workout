@@ -124,6 +124,62 @@ app.get("/api/food", async (req, res) => {
     }
 });
 
+
+app.get('/api/exercises', async (req, res) => {
+  try {
+    const { type, input } = req.query;
+    const cleanInput = input.toLowerCase();
+    let url = '';
+    url += `&limit=10`;
+
+      if (type === "bodypart") {
+          url = `https://oss.exercisedb.dev/api/v1/exercises?bodyPart=${cleanInput}`;
+      } else if (type === "musclename") {
+          url = `https://oss.exercisedb.dev/api/v1/exercises?target=${cleanInput}`;
+      } else if (type === "equipment") {
+          url = `https://oss.exercisedb.dev/api/v1/exercises?equipment=${cleanInput}`;
+      }else {
+        return res.status(400).json({ error: "Invalid type" });
+    }
+    const response = await fetch(url);
+
+    console.log("STATUS:", response.status);
+
+    const text = await response.text();
+    console.log("RAW RESPONSE:", text);
+
+    const data = JSON.parse(text);
+    res.json(data);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
+
+
+app.get('/api/sport', async (req, res) => {
+  try {
+    const { input, weight, duration } = req.query;
+
+    const url = `https://api.api-ninjas.com/v1/caloriesburned?activity=${input}&weight=${weight}&duration=${duration}`;
+
+    const response = await fetch(url, {
+      headers: { "X-Api-Key": process.env.NINJAS_API_KEY }
+    });
+
+    const data = await response.json();
+    res.json(data);
+
+  } catch (err) {
+
+    console.error(err);
+    res.status(500).json({ error: "Server error "});
+  }
+});
+
 //Start server
 app.listen(port, () => {
   console.log(`✅ Listening at http://localhost:${port}`);

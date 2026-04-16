@@ -4,18 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon backend/server.js"
+    "start": "nodemon backend/server.js",
+    "build:css": "npx @tailwindcss/cli -i web/css/styles.css -o web/output.css"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@tailwindcss/cli": "^4.2.2",
     "bcrypt": "^6.0.0",
+    "daisyui": "^5.5.19",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "mongoose": "^8.18.0",
-    "mysql2": "^3.15.1"
+    "mysql2": "^3.15.1",
+    "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

@@ -3,30 +3,38 @@ import { capitalize, getUserId } from './helper.js';
 import { addExerciseToWorkout } from './workouts.js';
 import { addFoodToDay } from './foodDis.js';
 
+
+
+    document.querySelectorAll('#search-type-dropdown li a').forEach(item => {
+        item.addEventListener('click', () => {
+            document.getElementById('search-type').value = item.dataset.value;
+            document.querySelector('#search-type-dropdown summary').textContent = item.textContent;
+            document.getElementById('search-type-dropdown').removeAttribute('open');
+        })
+    });
 // Main search function
 export async function exerciseSearch() {
     const input = document.getElementById('weight-input').value.trim();
     const type = document.getElementById('search-type').value;
+    
     let url = "";
-    let options = {};
 
-    if (type === "bodypart") {
-        url = `https://www.exercisedb.dev/api/v1/bodyparts/${input}/exercises?offset=0&limit=10`;
-    } else if (type === "musclename") {
-        url = `https://www.exercisedb.dev/api/v1/muscles/${input}/exercises?offset=0&limit=10&includeSecondary=false`;
-    } else if (type === "equipment") {
-        url = `https://www.exercisedb.dev/api/v1/equipments/${input}/exercises?offset=0&limit=10`;
+
+    if (type === "bodypart" || type === "musclename" || type === "equipment") {
+        url = `/api/exercises?type=${type}&input=${input}`;
     } else if (type === "sport") {
         const weight = document.getElementById('weight-value').value;
         const duration = document.getElementById('time-value').value;
         if (!weight || !duration) return alert("Enter weight and duration.");
 
-        url = `https://api.api-ninjas.com/v1/caloriesburned?activity=${input}&weight=${weight}&duration=${duration}`;
-        options = { headers: { "X-Api-Key": "354XAWRKwcSb3E97ZttMDA==NOvEjgCr7GtpcmQd" }};
+        url = `/api/sport?input=${input}&weight=${weight}&duration=${duration}`;
     }
 
-    const data = await apiGet(url, options);
-    displayResults(type === "sport" ? data : data.data, type);
+
+
+    const data = await apiGet(url);
+    console.log("FRONTEND DATA:", data);
+    displayResults(data.data, type);
 }
 
 // Display search results
