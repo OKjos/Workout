@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
   username: { type: String, required: true },
-  password: { type: String, required: true }, 
+  password: { type: String, required: true },
   email: { type: String },
+  profileImage: { type: String, default: '' },
   workouts: [{
     _id: { type: mongoose.Schema.Types.ObjectId, auto: true }, 
     workoutName: String,
@@ -117,7 +118,7 @@ const UserSchema = new mongoose.Schema({
                 },
                 gifUrl: {
                     type: String,
-                    required: true
+                    default: ''
                 },
                 sets: [
                     {

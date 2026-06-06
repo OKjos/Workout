@@ -45,8 +45,6 @@ export async function addExerciseToWorkout(btn, workoutId) {
         secondaryMuscles: JSON.parse(btn.dataset.secondaryMuscles)
     });
 
-    if (res.success) alert("Exercise added!");
-    else alert("Error adding exercise.");
 }
 
 

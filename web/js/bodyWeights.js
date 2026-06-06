@@ -1,18 +1,22 @@
 import { apiPost } from './api.js';
 import { getUserId } from './helper.js';
+import { reloadCalendar } from './routine.js';
 
 
 let chartInstance = null;
 
+document.addEventListener('click', () => {
+    document.querySelectorAll('.kebab-menu.open').forEach(m => m.classList.remove('open'));
+});
+
 const bodyInput = document.getElementById('body-inputbox-id');
 const bodySubmit = document.getElementById('body-submit-id');
 
-bodySubmit.addEventListener('click', function (event) {
+bodySubmit.addEventListener('click', async function (event) {
     event.preventDefault();
-
     const input = parseFloat(bodyInput.value);
-    bodyWeightChart(input);
-
+    await bodyWeightChart(input);
+    await reloadCalendar();
 })
 
 
@@ -35,8 +39,8 @@ export async function bodyWeightChart(input) {
         //.map pulls just the weight numbers from the array and then ...weights unpacks it and
         //compares the values then ±30 the value
         const weights = currentMonthData.map(entry => entry.dailyWeight);
-        const minWeight = Math.min(...weights) - 20;
-        const maxWeight = Math.max(...weights) + 20;
+        const minWeight = weights.length ? Math.min(...weights) - 20 : 100;
+        const maxWeight = weights.length ? Math.max(...weights) + 20 : 300;
 
 
 
@@ -73,9 +77,41 @@ export async function bodyWeightChart(input) {
                 const date = new Date(entry.createdAt).toLocaleDateString();
                 items.textContent = `${date} - ${entry.dailyWeight} lbs`;
                 document.getElementById("daily-weight").appendChild(items);
-                 const btn = document.createElement('button');
-                btn.textContent = '⋮';
-                items.appendChild(btn);
+                const wrapper = document.createElement('span');
+                wrapper.className = 'kebab-wrapper';
+
+                const kebabBtn = document.createElement('button');
+                kebabBtn.textContent = '⋮';
+                kebabBtn.className = 'kebab-btn';
+
+                const menu = document.createElement('div');
+                menu.className = 'kebab-menu';
+
+                const delItem = document.createElement('button');
+                delItem.textContent = 'Delete';
+                delItem.className = 'kebab-item';
+                delItem.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    menu.classList.remove('open');
+                    const userId = await getUserId();
+                    const delRes = await fetch(`/body/users/${userId}/bodyWeight/${entry._id}`, { method: 'DELETE' });
+                    if (delRes.ok) {
+                        if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+                        await bodyWeightChart();
+                        await reloadCalendar();
+                    }
+                });
+
+                kebabBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('.kebab-menu.open').forEach(m => { if (m !== menu) m.classList.remove('open'); });
+                    menu.classList.toggle('open');
+                });
+
+                menu.appendChild(delItem);
+                wrapper.appendChild(kebabBtn);
+                wrapper.appendChild(menu);
+                items.appendChild(wrapper);
             });
 
             for (const month in monthlyAverage) {

@@ -12,10 +12,13 @@
         <form action="/user/login" method="POST">
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
+            <label class="remember-label">
+                <input type="checkbox" name="rememberMe"> Stay logged in
+            </label>
             <button class="login-submit" id="submit-login" type="submit">Login</button>
         </form>
         <a href="/register" class="register-btn">Register</a>
     </section>
-    <script src="./js/index.js"></script>
+    <script type="module" src="./js/index.js"></script>
 </body>
 </html>

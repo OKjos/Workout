@@ -64,7 +64,7 @@ router.delete('/users/:userId/bodyWeight/:bodyWeight', async (req, res) => {
         }
 
         user.bodyWeight = user.bodyWeight.filter(
-            ex => ex._id.toString() !== bodyWeightId
+            ex => ex._id.toString() !== bodyWeight
         );
 
         await user.save();

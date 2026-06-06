@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link href="./css/output.css" rel="stylesheet">
+    <link href="./css/styles.css" rel="stylesheet">
 
 </head>
 <body>
@@ -37,24 +37,10 @@
     <section class="search-box" id="search-box">
         <input type="text" class="search-content" id="weight-input" placeholder="Enter to search">
         <button type="submit" class="submit-button" id="weight-button">Search</button>
-        <details class="dropdown" id="search-type-dropdown">
-            <summary class="btn btn-neutral">Bodypart</summary>
-            <ul class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
-                <li><a data-value="bodypart">Bodypart</a></li>
-                <li><a data-value="musclename">Muscle Name</a></li>
-                <li><a data-value="equipment">Equipment</a></li>
-                <li><a data-value="sport">Sport</a></li>
-            </ul>
-        </details>
-        <input type="hidden" id="search-type" value="bodypart">
-
-
-
-
-        <section id="extra-inputs" style="display: none;">
-            <label>Welight (lbs): <input type="number" id="weight-value"></label>
-            <label>Duration (minutes): <input type="number" id="time-value"></label>
-        </section>
+        <select class="type-box" id="search-type">
+            <option value="name">Exercise Name</option>
+            <option value="equipment">Equipment</option>
+        </select>
 
         <button class="createRoutineBtn" id="createRoutineBtn">Create Workout Routine</button>
         
@@ -71,6 +57,7 @@
 
     <section class="weight-results" id="results"></section>
 
+    <section id="popup-routineAdd"></section>
 
 
 

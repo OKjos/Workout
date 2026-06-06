@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 //  LOGIN 
 router.post('/login', async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, rememberMe } = req.body;
 
         const user = await User.findOne({ username });
         if (!user) return res.send('<p>User not found</p><a href="/">Go back</a>');
@@ -16,11 +16,33 @@ router.post('/login', async (req, res) => {
 
         req.session.userId = user._id;
         req.session.username = user.username;
+        if (rememberMe === 'on') {
+            req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000;
+        }
 
         res.redirect('/home');
     } catch (err) {
         console.error(err);
         res.status(500).send('Server error');
+    }
+});
+
+router.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) return res.status(500).json({ error: 'Logout failed' });
+        res.clearCookie('connect.sid');
+        res.json({ success: true });
+    });
+});
+
+router.post('/upload-image/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { imageData } = req.body;
+        await User.findByIdAndUpdate(userId, { profileImage: imageData });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Upload failed' });
     }
 });
 

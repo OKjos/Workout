@@ -74,11 +74,13 @@ app.get('/', (req, res) => {
 
 // Frontend can check who's logged in
 // Returns: { _id, username } or 401 error if not logged in
-app.get('/api/current-user', (req, res) => {
+app.get('/api/current-user', async (req, res) => {
   if (req.session.userId) {
+    const user = await User.findById(req.session.userId).select('username profileImage');
     res.json({
       _id: req.session.userId,
-      username: req.session.username
+      username: req.session.username,
+      profileImage: user?.profileImage || ''
     });
   } else {
     res.status(401).json({ error: 'Not logged in' });
@@ -125,35 +127,89 @@ app.get("/api/food", async (req, res) => {
 });
 
 
+let _exerciseCache = null;
+let _cacheTime = 0;
+
+function extractArray(raw) {
+  if (Array.isArray(raw)) return raw;
+  for (const key of ['data', 'exercises', 'results', 'items']) {
+    if (Array.isArray(raw[key])) return raw[key];
+  }
+  return [];
+}
+
+function strIncludes(field, term) {
+  if (!field) return false;
+  if (Array.isArray(field)) return field.some(v => String(v).toLowerCase().includes(term));
+  return String(field).toLowerCase().includes(term);
+}
+
+async function getAllExercises() {
+  if (_exerciseCache && Date.now() - _cacheTime < 60 * 60 * 1000) {
+    return _exerciseCache;
+  }
+
+  // API ignores limit and returns 25 per page — fetch all pages in parallel
+  const pageSize = 25;
+  const maxPages = 55; // covers ~1375 exercises
+  console.log('[exercises] fetching all pages in parallel...');
+
+  const pages = await Promise.allSettled(
+    Array.from({ length: maxPages }, (_, i) =>
+      fetch(`https://oss.exercisedb.dev/api/v1/exercises?limit=${pageSize}&offset=${i * pageSize}`)
+        .then(r => r.ok ? r.json() : [])
+        .then(raw => extractArray(raw))
+        .catch(() => [])
+    )
+  );
+
+  const seen = new Set();
+  const all = [];
+  for (const p of pages) {
+    if (p.status !== 'fulfilled') continue;
+    for (const ex of p.value) {
+      if (ex.exerciseId && !seen.has(ex.exerciseId)) {
+        seen.add(ex.exerciseId);
+        all.push(ex);
+      }
+    }
+  }
+
+  _exerciseCache = all;
+  _cacheTime = Date.now();
+  console.log('[exercises] cached', all.length, 'exercises');
+  return _exerciseCache;
+}
+
 app.get('/api/exercises', async (req, res) => {
   try {
     const { type, input } = req.query;
-    const cleanInput = input.toLowerCase();
-    let url = '';
-    url += `&limit=10`;
+    if (!type || !input) return res.json({ data: [] });
+    const term = input.toLowerCase().trim();
 
-      if (type === "bodypart") {
-          url = `https://oss.exercisedb.dev/api/v1/exercises?bodyPart=${cleanInput}`;
-      } else if (type === "musclename") {
-          url = `https://oss.exercisedb.dev/api/v1/exercises?target=${cleanInput}`;
-      } else if (type === "equipment") {
-          url = `https://oss.exercisedb.dev/api/v1/exercises?equipment=${cleanInput}`;
-      }else {
-        return res.status(400).json({ error: "Invalid type" });
+    const all = await getAllExercises();
+    console.log(`[exercises] search type=${type} term="${term}" across ${all.length}`);
+
+    let filtered = [];
+    if (type === 'name') {
+      filtered = all.filter(ex =>
+        strIncludes(ex.name, term) ||
+        strIncludes(ex.bodyParts ?? ex.bodyPart, term) ||
+        strIncludes(ex.targetMuscles ?? ex.target, term) ||
+        strIncludes(ex.secondaryMuscles, term)
+      );
+    } else if (type === 'equipment') {
+      // field is "equipments" (array) on this API
+      filtered = all.filter(ex =>
+        strIncludes(ex.equipments ?? ex.equipment, term)
+      );
     }
-    const response = await fetch(url);
 
-    console.log("STATUS:", response.status);
-
-    const text = await response.text();
-    console.log("RAW RESPONSE:", text);
-
-    const data = JSON.parse(text);
-    res.json(data);
-
+    console.log(`[exercises] ${filtered.length} matches`);
+    res.json({ data: filtered.slice(0, 100) });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
+    console.error('[exercises] error:', err.message);
+    res.json({ data: [] });
   }
 });
 

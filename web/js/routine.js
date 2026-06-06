@@ -26,12 +26,81 @@ export async function createRoutine() {
 
 // Show details of a specific workout
 export async function showWorkoutDetails(workout) {
-    
+    try {
     const userId = await getUserId();
+    if (!userId) return alert("Login required.");
+
     const res = await fetch(`/workouts/users/${userId}/workouts/${workout}`);
     const workoutData = await res.json();
-
     const actualWorkout = workoutData.workout;
+    if (!actualWorkout) return alert("Workout not found.");
+
+    const lastSetsMap = {};
+    try {
+        const histRes = await fetch(`/workouts/users/${userId}/workoutHistory`);
+        const histData = await histRes.json();
+        const history = histData.workoutHistory || [];
+        console.log('[routine] workoutHistory entries:', history.length, history);
+        [...history].reverse().forEach(session => {
+            session.exercises?.forEach(ex => {
+                if (!lastSetsMap[ex.exerciseId] && ex.sets?.length > 0) {
+                    lastSetsMap[ex.exerciseId] = ex.sets;
+                }
+            });
+        });
+    } catch (_) {}
+
+    function getLastSessionSets(sets) {
+        if (!sets?.length) return [];
+        const result = [sets[sets.length - 1]];
+        for (let i = sets.length - 2; i >= 0; i--) {
+            if (sets[i].setNumber < result[0].setNumber) result.unshift(sets[i]);
+            else break;
+        }
+        return result;
+    }
+
+    function buildExerciseCard(ex) {
+        const histSets = lastSetsMap[ex.exerciseId] || [];
+        const ownSets = ex.sets || [];
+        const setsToRender = histSets.length > 0 ? histSets : getLastSessionSets(ownSets);
+
+        const setRows = setsToRender.length > 0
+            ? setsToRender.map((set, i) => `
+                <section class="set-inputs">
+                    <span class="rep-counter">${i + 1}</span>
+                    <input type="number" value="${set.reps ?? ''}" placeholder="Reps" class="rep-input">
+                    <input type="number" value="${set.weight ?? ''}" placeholder="Lbs" class="weight-input">
+                    <button class="remove-set-btn">Remove</button>
+                </section>`).join('')
+            : `
+                <section class="set-inputs">
+                    <span class="rep-counter">1</span>
+                    <input type="number" placeholder="Reps" class="rep-input">
+                    <input type="number" placeholder="Lbs" class="weight-input">
+                    <button class="remove-set-btn">Remove</button>
+                </section>`;
+
+        return `
+            <section class="exercise-card" data-exercise-id="${ex.exerciseId}">
+                <section class="exercise-left">
+                    <img src="${ex.gifUrl}">
+                    <p>Body Part<br><br>${capitalize(ex.bodyParts?.[0] || '')}</p>
+                    <p>Target Muscles<br><br>${capitalize(ex.targetMuscles?.[0] || '')}</p>
+                    <p>Secondary Muscles<br><br>${capitalize(ex.secondaryMuscles?.[0] || '')}</p>
+                    <button class="remove-from-routine"
+                        data-workout-id="${actualWorkout._id}"
+                        data-exercise-id="${ex.exerciseId}">Remove</button>
+                </section>
+                <section class="set-section">
+                    <section class="set-headers">
+                        <span>SET</span><span>REPS</span><span>LBS</span>
+                    </section>
+                    <section class="sets-container">${setRows}</section>
+                    <button class="add-set">Add set</button>
+                </section>
+            </section>`;
+    }
 
     const section = document.getElementById('routine-details');
     section.classList.remove('hidden');
@@ -43,41 +112,8 @@ export async function showWorkoutDetails(workout) {
                 <button id="closeRoutine">Close Routine</button>
                 <button id="toggleTimerBtn">Start</button>
             </section>
-                <section class="exercise-grid">
-                    ${actualWorkout.exercises.map(ex => `
-                    <section class="exercise-card">
-                    <section class="exercise-left">
-                        <img src="${ex.gifUrl}">
-                        <p>Body Part<br><br> ${capitalize(ex.bodyParts[0])}</p>
-                        <p>Target Muscles<br><br> ${capitalize(ex.targetMuscles[0])}</p>
-                        <p>Secondary Muscles<br><br> ${capitalize(ex.secondaryMuscles[0])}</p>
-                        <button 
-                            class="remove-from-routine"
-                            data-workout-id="${actualWorkout._id}"
-                            data-exercise-id="${ex.exerciseId}">
-                        Remove
-                        </button>
-
-
-                    <section class="set-section">
-                        <section class="set-headers">
-                            <span>SET</span>
-                            <span>REPS</span>
-                            <span>LBS</span>
-                        </section>
-                        <section class="sets-container">
-                            <section class="set-inputs">
-                                <span class="rep-counter">1</span>
-                                <input type="number" placeholder="Reps" class="rep-input">
-                                <input type="number" placeholder="Lbs" class="weight-input">
-                                <button>Remove</button>
-                            </section>
-                        </section>
-                        <button class="add-set">Add set</button>
-                    </section>
-                    </section>
-                </section>
-            `).join("")}
+            <section class="exercise-grid">
+                ${actualWorkout.exercises.map(buildExerciseCard).join("")}
             </section>
         </section>
     `;
@@ -88,19 +124,18 @@ export async function showWorkoutDetails(workout) {
 
     removeBtn.forEach(btn => {
         btn.addEventListener("click", async () => {
-            
-             let workoutId = btn.dataset.workoutId;
-             let exerciseId = btn.dataset.exerciseId;
-
+            let workoutId = btn.dataset.workoutId;
+            let exerciseId = btn.dataset.exerciseId;
             const userId = await getUserId();
-
-
             await fetch(`/workouts/users/${userId}/workouts/${workoutId}/exercises/${exerciseId}`, {
                 method: "DELETE"
             });
-
             btn.closest(".exercise-card").remove();
         });
+    });
+
+    section.querySelectorAll('.remove-set-btn').forEach(btn => {
+        btn.addEventListener('click', () => btn.closest('.set-inputs').remove());
     });
 
 
@@ -109,30 +144,33 @@ export async function showWorkoutDetails(workout) {
 
 
     setAddBtn.forEach(setBtn => {
-        
+
         const card = setBtn.closest('.exercise-card');
         const container = card.querySelector('.sets-container');
-        let counter = 1;
+        const exerciseId = card.dataset.exerciseId;
+        const histSets = lastSetsMap[exerciseId] || [];
+        const matchEx = actualWorkout.exercises.find(e => e.exerciseId === exerciseId);
+        const ownSets = matchEx?.sets || [];
+        let counter = container.querySelectorAll('.set-inputs').length;
 
-
-        
         setBtn.addEventListener("click", () => {
+            const histSet = histSets[counter] || ownSets[counter] || null;
             counter++;
 
-
-
+            const repsHint = histSet?.reps ?? 'Reps';
+            const weightHint = histSet?.weight ?? 'Lbs';
 
             const newSet = document.createElement("section");
             newSet.classList.add("set-inputs");
 
-
             newSet.innerHTML = `
                 <span>${counter}</span>
-                    <input type="number" placeholder="Reps" class="rep-input">
-                    <input type="number" placeholder="Lbs" class="weight-input">
-                    <button>Remove</button>
+                <input type="number" placeholder="${repsHint}" class="rep-input">
+                <input type="number" placeholder="${weightHint}" class="weight-input">
+                <button class="remove-set-btn">Remove</button>
             `;
 
+            newSet.querySelector('.remove-set-btn').addEventListener('click', () => newSet.remove());
             container.appendChild(newSet);
         });
     })
@@ -201,133 +239,126 @@ export async function showWorkoutDetails(workout) {
 
             const cards = section.querySelectorAll('.exercise-card');
 
-                for (const card of cards) {
-                    const workoutId = card.querySelector('.remove-from-routine').dataset.workoutId;
-                    const exerciseId = card.querySelector('.remove-from-routine').dataset.exerciseId;
-                    const sets = card.querySelectorAll('.set-inputs');   
-                    let index = 0;
+            for (const card of cards) {
+                const removeBtn = card.querySelector('.remove-from-routine');
+                const workoutId  = removeBtn.dataset.workoutId;
+                const exerciseId = removeBtn.dataset.exerciseId;
+                const setRows    = card.querySelectorAll('.set-inputs');
+                const matchedExercise = actualWorkout.exercises.find(ex => ex.exerciseId === exerciseId);
+                const gifUrl = matchedExercise?.gifUrl || '';
 
-                    const cardSets = [];
+                const cardSets = [];
+                let setNumber = 1;
 
+                for (const row of setRows) {
+                    const reps   = parseFloat(row.querySelector('.rep-input').value);
+                    const weight = parseFloat(row.querySelector('.weight-input').value);
+                    if (!reps || !weight) continue; // skip rows with no values entered
 
-
-                    //GETS THE WHOLE EXERCCISE ARRAY
-                    const matchedExercise = actualWorkout.exercises.find(ex => ex.exerciseId === exerciseId);
-
-                    for (const row of sets) {
-                        
-                        const reps = row.querySelector('.rep-input').value;
-                        const weight = row.querySelector('.weight-input').value;
-                        const res = await apiPost(`/workouts/users/${userId}/workouts/${workoutId}/exercises/${exerciseId}/sets`, {
-                        weight: weight,
-                        reps: reps,
-                        setNumber: index + 1,
-                        time: seconds,
+                    await apiPost(`/workouts/users/${userId}/workouts/${workoutId}/exercises/${exerciseId}/sets`, {
+                        weight, reps, setNumber, time: seconds
                     });
-                    index++
-                    cardSets.push({weight, reps, setNumber: index + 1, time: seconds});
+                    cardSets.push({ weight, reps, setNumber, time: seconds });
+                    setNumber++;
                 }
-                historyExercises.push({sets: cardSets, exerciseId, gifUrl: matchedExercise.gifUrl});
+                historyExercises.push({ sets: cardSets, exerciseId, gifUrl });
             }
-            
 
-
-            const wHistory = await fetch(`/workouts/users/${userId}/workoutHistory`, {
+            console.log('[routine] saving history:', { workoutName: actualWorkout.workoutName, exercises: historyExercises });
+            const histRes = await fetch(`/workouts/users/${userId}/workoutHistory`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ workoutName: actualWorkout.workoutName, exercises: historyExercises })
             });
+            const histBody = await histRes.json().catch(() => ({}));
+            if (!histRes.ok) {
+                console.error('[routine] workoutHistory POST failed:', histRes.status, histBody);
+            } else {
+                console.log('[routine] workoutHistory POST ok:', histBody);
+            }
 
+            await reloadCalendar();
 
         } catch (error) {
             console.error("Error in saving workout", error);
         }
     }
 
+    } catch (error) {
+        console.error("Error in showWorkoutDetails:", error);
+    }
 }
 
 
 
 
-export async function workoutHistory() {
+let _calMonth = new Date().getMonth();
+let _calYear  = new Date().getFullYear();
+
+export async function reloadCalendar() {
+    const prevMonthBtn = document.querySelector(".prev-month");
+    if (!prevMonthBtn) return;
+
+    const monthYear  = document.querySelector(".month-year");
+    const gridCon    = document.querySelector(".workout-grid-con");
+    const workoutDes = document.querySelector(".workout-description");
+
     try {
-
-        const prevMonthBtn = document.querySelector(".prev-month");
-        const nextMonth = document.querySelector(".next-month");
-        const monthYear = document.querySelector(".month-year");
-        const gridCon = document.querySelector(".workout-grid-con");
-        const workoutDes = document.querySelector(".workout-description");
-
-        
         const userId = await getUserId();
         const res = await fetch(`/workouts/users/${userId}/workoutHistory`);
+        if (!res.ok) throw new Error("Failed to fetch history");
         const historyData = await res.json();
+        const { workoutHistory, foods, bodyWeight } = historyData;
+        console.log('[calendar] workoutHistory:', workoutHistory?.length, workoutHistory);
 
-         if (!res.ok) {
-            throw new Error("Failed to fetch history");
-         }
+        const workoutDate = {};
+        const foodByDate  = {};
+        const weightByDate = {};
 
-         const { workoutHistory, foods, bodyWeight } = historyData;
+        workoutHistory.forEach(workout => {
+            const d = new Date(workout.createdAt);
+            workoutDate[`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`] = workout;
+        });
 
-         const date = new Date();
-         let month =  date.getMonth();
-         let year = date.getFullYear();
+        foods.forEach(food => {
+            const d = new Date(food.createdAt);
+            const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+            if (!foodByDate[key]) foodByDate[key] = [];
+            foodByDate[key].push(food);
+        });
 
-         const workoutDate = {};
-         const foodByDate = {};
-         const weightByDate = {};
+        bodyWeight.forEach(bodyW => {
+            const d = new Date(bodyW.createdAt);
+            weightByDate[`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`] = bodyW;
+        });
 
-
-         workoutHistory.forEach(workout => {
-            const workoutDay = new Date(workout.createdAt);
-            const key = `${workoutDay.getFullYear()}-${workoutDay.getMonth()}-${workoutDay.getDate()}`;
-            workoutDate[key] = workout;
-         });
-
-         foods.forEach(food => {
-            const foodDay = new Date(food.createdAt);
-            const key = `${foodDay.getFullYear()}-${foodDay.getMonth()}-${foodDay.getDate()}`;
-            if (!foodByDate[key]) {
-                foodByDate[key] = [food];
-            } else if (foodByDate[key]) {
-                foodByDate[key].push(food);
-            }
-         });
-
-         bodyWeight.forEach(bodyW => {
-            const bodyWeightDay = new Date(bodyW.createdAt);
-            const key = `${bodyWeightDay.getFullYear()}-${bodyWeightDay.getMonth()}-${bodyWeightDay.getDate()}`;
-            weightByDate[key] = bodyW;
-         });
-
-         prevMonthBtn.addEventListener('click', () => {
-            month--;
-            if (month < 0) {
-                year--;
-                month = 11;
-            }
-            renderCalendar(month, year, workoutDate, foodByDate, weightByDate, gridCon, monthYear, workoutDes);
-         });
-        
-         nextMonth.addEventListener('click', () => {
-            month++;
-            if (month > 11) {
-                year++;
-                month = 0;
-            }
-            renderCalendar(month, year, workoutDate, foodByDate, weightByDate, gridCon, monthYear, workoutDes);
-         });
-
-
-
-         renderCalendar(month, year, workoutDate, foodByDate, weightByDate, gridCon, monthYear, workoutDes);
-
-
-
+        renderCalendar(_calMonth, _calYear, workoutDate, foodByDate, weightByDate, gridCon, monthYear, workoutDes);
     } catch (error) {
-
         console.log(error);
     }
+}
+
+export async function workoutHistory() {
+    const prevMonthBtn = document.querySelector(".prev-month");
+    const nextMonthBtn = document.querySelector(".next-month");
+    if (!prevMonthBtn || !nextMonthBtn) return;
+
+    _calMonth = new Date().getMonth();
+    _calYear  = new Date().getFullYear();
+
+    prevMonthBtn.onclick = () => {
+        _calMonth--;
+        if (_calMonth < 0) { _calYear--; _calMonth = 11; }
+        reloadCalendar();
+    };
+
+    nextMonthBtn.onclick = () => {
+        _calMonth++;
+        if (_calMonth > 11) { _calYear++; _calMonth = 0; }
+        reloadCalendar();
+    };
+
+    await reloadCalendar();
 }
 
 
@@ -428,8 +459,3 @@ function renderCalendar(month, year, workoutDate, foodByDate, weightByDate, grid
 
 
 }
-
-//Workout description innerHTML
-//renderCalendar to check for an entry on that day
-//Current month/year not showing between prev and next month button
-//Prev and next month button needs styling

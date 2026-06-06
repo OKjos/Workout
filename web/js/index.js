@@ -2,15 +2,34 @@ import { exerciseSearch, handleFoodSearch } from "./search.js";
 import { loadWorkouts } from "./workouts.js";
 import { macroPiChart } from "./foodDis.js";
 import { openRoutineForm, closeRoutineForm, createRoutine, showWorkoutDetails, workoutHistory } from "./routine.js";
+import { getUserId } from "./helper.js";
 
+function resizeImage(file, size) {
+    return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                const min = Math.min(img.width, img.height);
+                const sx = (img.width - min) / 2;
+                const sy = (img.height - min) / 2;
+                ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
+                resolve(canvas.toDataURL('image/jpeg', 0.8));
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const weightBtn = document.getElementById('weight-button');
     const searchExercise = document.getElementById('weight-input');
-    const searchType = document.getElementById('search-type');
-    const extraInputs = document.getElementById('extra-inputs');
     const routineBtn = document.getElementById('createRoutineBtn');
-    const routineFrm = document.getElementById('routineForm');
     const closeRoutineBtn = document.getElementById('closeRoutineBtn');
     const submitRoutineBtn = document.getElementById('submitRoutine');
     const workoutPageBtn = document.getElementById('workout-page-btn');
@@ -19,7 +38,75 @@ document.addEventListener("DOMContentLoaded", () => {
     const routineLibrary = document.getElementById('routine-library');
     const foodInput = document.getElementById('food-input');
     const foodSubmit = document.getElementById('food-button');
-    macroPiChart();
+
+    // ---------------------------
+    // Profile dropdown
+    // ---------------------------
+    const profileCircle = document.querySelector('.profile-circle');
+    if (profileCircle) {
+        profileCircle.style.position = 'relative';
+        profileCircle.style.cursor = 'pointer';
+
+        const menu = document.createElement('div');
+        menu.className = 'profile-menu';
+        menu.innerHTML = `
+            <button class="profile-menu-item" id="pm-upload">Upload Image</button>
+            <button class="profile-menu-item" id="pm-settings">Settings</button>
+            <button class="profile-menu-item profile-menu-logout" id="pm-logout">Logout</button>
+        `;
+        profileCircle.appendChild(menu);
+
+        profileCircle.addEventListener('click', e => {
+            e.stopPropagation();
+            menu.classList.toggle('open');
+        });
+        document.addEventListener('click', () => menu.classList.remove('open'));
+
+        document.getElementById('pm-logout').addEventListener('click', async e => {
+            e.stopPropagation();
+            await fetch('/user/logout', { method: 'POST' });
+            window.location.href = '/';
+        });
+
+        document.getElementById('pm-settings').addEventListener('click', e => {
+            e.stopPropagation();
+            window.location.href = '/profile';
+        });
+
+        document.getElementById('pm-upload').addEventListener('click', e => {
+            e.stopPropagation();
+            menu.classList.remove('open');
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.click();
+            fileInput.addEventListener('change', async () => {
+                const file = fileInput.files[0];
+                if (!file) return;
+                const imageData = await resizeImage(file, 120);
+                const userId = await getUserId();
+                const res = await fetch(`/user/upload-image/${userId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageData })
+                });
+                if (res.ok) {
+                    profileCircle.querySelector('img').src = imageData;
+                }
+            });
+        });
+
+        // load saved profile image
+        try {
+            const cu = await fetch('/api/current-user');
+            if (cu.ok) {
+                const userData = await cu.json();
+                if (userData.profileImage) {
+                    profileCircle.querySelector('img').src = userData.profileImage;
+                }
+            }
+        } catch (_) {}
+    }
 
     // ---------------------------
     // Exercise Search
@@ -27,9 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (weightBtn) {
         weightBtn.addEventListener('click', exerciseSearch);
         searchExercise.addEventListener('keydown', e => { if(e.key==="Enter") exerciseSearch(); });
-        searchType.addEventListener("change", () => {
-            extraInputs.style.display = searchType.value === "sport" ? "block" : "none";
-        });
     }
 
     // ---------------------------
@@ -117,7 +201,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------
     // Load Workouts Initially
     // ---------------------------
-    loadWorkouts();
-    profileButtons();
-    workoutHistory();
+    if (document.getElementById('routine-results')) loadWorkouts();
+    if (document.getElementById('macro-info-btn')) profileButtons();
+    if (document.querySelector('.prev-month')) workoutHistory();
+    if (document.getElementById('myChart')) macroPiChart();
 });
